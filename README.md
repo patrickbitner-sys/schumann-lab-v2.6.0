@@ -45,5 +45,12 @@ Note: Open via HTTP, not `file://`.
 - `docs/DIAGRAM_v2.6.0.md`
 - `docs/RELEASE_NOTES_v2.6.0.md`
 
+## Release Workflow
+- Lightweight release guide: `RELEASE_WORKFLOW.md`
+- One-command patch release (example):
+```bash
+python3 tools/release_v26.py 2.6.1 --push
+```
+
 ## Repository Notes
 This repo includes large audio assets. For long-term scaling, use Git LFS for WAV/MP3 libraries.
