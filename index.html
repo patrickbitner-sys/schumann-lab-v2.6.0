@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Schumann Lab</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>Schumann Resonance Lab</h1>
+
+      <div class="tabs">
+        <button class="tab active" data-view="explore">Explore</button>
+        <button class="tab" data-view="meditate">Meditate</button>
+        <button class="tab" data-view="journal">Journal</button>
+      </div>
+
+      <section class="view view-explore active">
+        <div class="grid">
+          <div class="panel">
+            <h2>Session</h2>
+            <label for="freqSelect">Band</label>
+            <select id="freqSelect">
+              <option value="7.83">7.83 Hz</option>
+              <option value="14.3">14.3 Hz</option>
+              <option value="20.8">20.8 Hz</option>
+              <option value="27.3">27.3 Hz</option>
+              <option value="33.8">33.8 Hz</option>
+            </select>
+            <div class="row mt8">
+              <button id="explorePlay" class="btn primary">Start Explore</button>
+              <button id="exploreStop" class="btn" disabled>Stop</button>
+            </div>
+
+            <label>Mode</label>
+            <div class="pill-row">
+              <button class="pill active" data-mode="am">Isochronic (AM)</button>
+              <button class="pill" data-mode="binaural">Binaural</button>
+              <button class="pill" data-mode="both">Spatial Echo</button>
+              <button class="pill" data-mode="ambient">Ambient Echo</button>
+            </div>
+
+            <label for="carrierRange">Carrier <span id="carrierLabel">230 Hz</span></label>
+            <input id="carrierRange" type="range" min="80" max="500" step="1" value="230" />
+            <label for="depthRange">Mod Depth <span id="depthLabel">70%</span></label>
+            <input id="depthRange" type="range" min="0" max="1" step="0.01" value="0.7" />
+            <label for="volumeRange">Master Volume <span id="volumeLabel">50%</span></label>
+            <input id="volumeRange" type="range" min="0" max="1" step="0.01" value="0.5" />
+
+            <label for="chordSelect">Chord Layer</label>
+            <select id="chordSelect">
+              <option value="none">None</option>
+              <option value="piano">Piano</option>
+              <option value="harp">Harp</option>
+              <option value="synth">Synth</option>
+              <option value="guitar">Guitar</option>
+            </select>
+
+            <div id="chordLoopRow" hidden>
+              <label for="chordLoopSelect">Chord Loop</label>
+              <select id="chordLoopSelect"></select>
+            </div>
+
+            <label for="irSelect">Reverb Space</label>
+            <select id="irSelect">
+              <option value="none">None</option>
+              <option value="forest">Forest</option>
+              <option value="temple">Temple</option>
+            </select>
+          </div>
+
+          <div class="panel">
+            <h2>Phase</h2>
+            <label for="phaseRange">Phase <span id="phaseLabel">0° / 0 ms</span></label>
+            <input id="phaseRange" type="range" min="0" max="360" step="1" value="0" />
+
+            <label for="sweepSeconds">Autosweep <span id="sweepLabel">30 s / 360°</span></label>
+            <input id="sweepSeconds" type="range" min="10" max="120" step="1" value="30" />
+
+            <div class="row mt8">
+              <button id="sweepToggle" class="btn">Start autosweep</button>
+              <button id="markStrongest" class="btn">Mark Strongest</button>
+              <button id="clearBestPhase" class="btn">Clear Best</button>
+            </div>
+
+            <p class="small">Best phase: <strong id="bestPhaseDisplay">Not set yet</strong></p>
+            <div id="scanProgress" class="row" hidden>
+              <span class="scan-tier"></span>
+              <span class="scan-step"></span>
+              <span class="scan-countdown"></span>
+            </div>
+            <p id="scanSummary" class="small" hidden></p>
+            <button id="fineTune" class="btn" hidden>Fine Tune Sweep</button>
+          </div>
+
+          <div class="panel">
+            <h2>Soundscapes</h2>
+            <label>Ocean <span id="oceanLabel">0%</span></label>
+            <input id="oceanRange" type="range" min="0" max="1" step="0.01" value="0" />
+            <label>Rain <span id="rainLabel">0%</span></label>
+            <input id="rainRange" type="range" min="0" max="1" step="0.01" value="0" />
+            <label>Birds <span id="birdsLabel">0%</span></label>
+            <input id="birdsRange" type="range" min="0" max="1" step="0.01" value="0" />
+            <label>Waves <span id="wavesLabel">0%</span></label>
+            <input id="wavesRange" type="range" min="0" max="1" step="0.01" value="0" />
+          </div>
+
+          <div class="panel">
+            <h2>Breathing + Scope</h2>
+            <label>Breath Cycle <span id="breathLabel">8.17 s (64×T)</span></label>
+            <input id="breathSeconds" type="range" min="0" max="9" step="1" value="5" />
+            <div id="breathOrb" class="breath-orb"></div>
+            <p id="breathSyncLabel" class="small"></p>
+            <canvas id="scopeCanvas" width="720" height="220"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="view view-meditate">
+        <div class="grid">
+          <div class="panel">
+            <h2>Meditation</h2>
+            <label for="medFreqSelect">Band</label>
+            <select id="medFreqSelect">
+              <option value="7.83">7.83 Hz</option>
+              <option value="14.3">14.3 Hz</option>
+              <option value="20.8">20.8 Hz</option>
+              <option value="27.3">27.3 Hz</option>
+              <option value="33.8">33.8 Hz</option>
+            </select>
+
+            <label for="sessionMinutes">Length <span id="sessionLabel">20 min</span></label>
+            <input id="sessionMinutes" type="range" min="1" max="120" step="1" value="20" />
+
+            <div class="row mt8">
+              <button id="medPlay" class="btn primary">Start Meditate</button>
+              <button id="medStop" class="btn" disabled>Stop</button>
+            </div>
+
+            <p class="small">Timer: <strong id="medTimerDisplay">∞</strong></p>
+            <p class="small" id="medPhaseLabel">Best (if available), otherwise live slider</p>
+          </div>
+
+          <div class="panel">
+            <h2>Soundscapes</h2>
+            <label>Ocean <span id="medOceanLabel">0%</span></label>
+            <input id="medOceanRange" type="range" min="0" max="1" step="0.01" value="0" />
+            <label>Rain <span id="medRainLabel">0%</span></label>
+            <input id="medRainRange" type="range" min="0" max="1" step="0.01" value="0" />
+            <label>Birds <span id="medBirdsLabel">0%</span></label>
+            <input id="medBirdsRange" type="range" min="0" max="1" step="0.01" value="0" />
+            <label>Waves <span id="medWavesLabel">0%</span></label>
+            <input id="medWavesRange" type="range" min="0" max="1" step="0.01" value="0" />
+          </div>
+
+          <div class="panel">
+            <h2>Breathing</h2>
+            <label>Breath Cycle <span id="medBreathLabel">8.17 s (64×T)</span></label>
+            <input id="medBreathSeconds" type="range" min="0" max="9" step="1" value="5" />
+            <div id="medBreathOrb" class="breath-orb"></div>
+            <p id="medBreathSyncLabel" class="small"></p>
+          </div>
+
+          <div class="panel">
+            <h2>Phase History</h2>
+            <div id="historyContainer"></div>
+            <div class="row mt8">
+              <button id="exportHistory" class="btn">Export History</button>
+              <button id="clearHistory" class="btn">Clear History</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view view-journal">
+        <div class="grid">
+          <div class="panel">
+            <h2>Journal Entry</h2>
+            <label for="intentionNote">Intention</label>
+            <textarea id="intentionNote"></textarea>
+            <label for="thoughtsNote">Thoughts</label>
+            <textarea id="thoughtsNote"></textarea>
+            <label for="gratitudeNote">Gratitude</label>
+            <textarea id="gratitudeNote"></textarea>
+            <label for="integrationNote">Integration</label>
+            <textarea id="integrationNote"></textarea>
+            <div class="row mt8">
+              <button id="saveJournalEntry" class="btn primary">Save Entry</button>
+              <button id="clearJournalFields" class="btn">Clear Fields</button>
+              <button id="hideJournalEntries" class="btn">Hide Entries</button>
+            </div>
+            <p id="saveJournalStatus" class="small"></p>
+          </div>
+
+          <div class="panel">
+            <h2>Saved Entries</h2>
+            <div id="journalEntriesContainer"></div>
+            <div class="row mt8">
+              <button id="exportJournal" class="btn">Export TXT</button>
+              <button id="exportJournalToNotes" class="btn">Share</button>
+              <button id="clearJournal" class="btn">Clear All</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <input id="journalNote" type="hidden" />
+      <button id="saveNote" type="button" hidden></button>
+      <span id="saveNoteStatus" hidden></span>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "favoriteKeywords": ["Cm", "Cmin", "Csus2"],
+  "meditationKeywords": ["sus", "add9", "maj7", "drone", "pad", "warm"],
+  "avoidKeywords": ["drum", "perc", "stacc", "pluck", "arp", "lead"],
+  "bpmRange": [110, 140]
+}

@@ -1,0 +1,31 @@
+{
+  "favoriteKeywords": [
+    "piano_gentle_1_reference-style",
+    "piano_gentle_1",
+    "gentle",
+    "cm",
+    "125"
+  ],
+  "meditationKeywords": [
+    "sus",
+    "add9",
+    "maj7",
+    "m7",
+    "minor",
+    "drone",
+    "pad",
+    "warm",
+    "soft",
+    "ambient"
+  ],
+  "avoidKeywords": [
+    "drum",
+    "perc",
+    "stacc",
+    "pluck",
+    "arp",
+    "lead",
+    "fx"
+  ],
+  "bpmRange": [120, 128]
+}
