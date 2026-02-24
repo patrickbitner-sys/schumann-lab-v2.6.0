@@ -113,6 +113,17 @@ let chordBufferSource = null;
 // Cache of decoded chord loop buffers by instrument and file name.
 const chordBufferCache = {};
 
+// iOS Safari can interrupt AudioContext when the page is backgrounded.
+// On return to foreground we attempt a safe resume so users don't need to
+// manually refresh the page after app switching.
+function resumeAudioContextIfInterrupted() {
+  if (!audioCtx) return;
+  const state = audioCtx.state;
+  if (state === 'suspended' || state === 'interrupted') {
+    audioCtx.resume().catch(() => {});
+  }
+}
+
 // ----- Band‑driven stereo motion (v2.5.0) -----
 // To provide a gentle spatial movement of the soundscapes and chord layers
 // at the selected Schumann band rate we introduce a global low‑frequency
@@ -2447,6 +2458,19 @@ Promise.all([loadChordManifest(), loadChordPreferences()]).then(() => {
 
 // Load existing journal entries at startup
 renderJournalEntries();
+
+// Attempt to recover audio when returning from background/app switching.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    resumeAudioContextIfInterrupted();
+  }
+});
+window.addEventListener('pageshow', () => {
+  resumeAudioContextIfInterrupted();
+});
+window.addEventListener('focus', () => {
+  resumeAudioContextIfInterrupted();
+});
 
 // Clean up audio when leaving the page
 window.addEventListener('beforeunload', () => {

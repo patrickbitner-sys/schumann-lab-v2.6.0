@@ -36,6 +36,10 @@ Note: Open via HTTP, not `file://`.
 - Install IR helper: `tools/install_ir_files.py`
 - Rebuild chord manifest: `tools/rebuild_chord_manifest.py`
 
+## iOS Setup
+- iOS setup guide (Worldwide Web + Safari): `PWA_SETUP_IOS.md`
+- iOS on-device validation checklist: `ON_DEVICE_TEST_CHECKLIST.md`
+
 ## Testing
 - Manual smoke checklist: `SMOKE_TEST_CHECKLIST.md`
 

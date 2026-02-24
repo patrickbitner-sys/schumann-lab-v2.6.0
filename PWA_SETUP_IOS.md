@@ -1,23 +1,76 @@
-# Running Schumann Lab on iPhone
+# Schumann Lab on iOS (Worldwide Web + Safari)
 
-This guide explains how to host and install the **Schumann Resonance Lab** as a local PWA on an iOS device (such as an iPhone 16 Pro) using the **Worldwide Web** app.  The Worldwide Web app acts as a lightweight local server, allowing you to serve the app’s files directly from your device and install it to the home screen.
+This guide covers two practical ways to run **Schumann Lab v2.6.x** on iPhone/iPad:
+- Option A: host files directly on-device with **Worldwide Web**
+- Option B: host from your computer and open in **Safari** on iOS
 
-## Prerequisites
+## Requirements
+- iOS/iPadOS device with Safari
+- Schumann Lab project folder (this repo contents)
+- For Option A: Worldwide Web app installed on iOS
+- For Option B: your iOS device and computer on the same network
 
-1. **Worldwide Web app** – Download and install the “Worldwide Web” app from the iOS App Store.  This app lets you share local files via HTTP without requiring a computer.
-2. **Schumann Lab files** – Copy the unzipped Schumann Lab project folder (e.g. `schumann_lab_v2.2.1`) onto your iPhone.  You can do this via AirDrop, Files app or iTunes File Sharing.
+## Option A: Worldwide Web (on-device hosting)
+1. Copy the Schumann Lab folder to iPhone/iPad Files.
+2. Open **Worldwide Web** and navigate to that folder.
+3. Start the local server (Play/Start button).
+4. Open Safari and go to the URL shown by Worldwide Web (for example `http://localhost:8080`).
+5. Start audio with a user action (`Start Explore` or `Start Meditate`).
 
-## Steps
+Optional:
+- Use Safari Share -> **Add to Home Screen** for quicker launch.
 
-1. **Launch Worldwide Web** and navigate to the directory containing the Schumann Lab files.  Tap the folder (e.g. `schumann_lab_v2.2.1`) to open it.
-2. **Start the server**: tap the **Play** button to start serving files from this folder.  The app will display a local URL such as `http://localhost:8080/`.
-3. **Open Safari** and enter the local URL provided by Worldwide Web.  You should see the Schumann Lab homepage.
-4. **Install as a PWA**: tap the Share icon, then choose **Add to Home Screen**.  Safari will prompt you to confirm.  The app will appear on your home screen as “Schumann Lab”.  Launching it from there runs it full‑screen and offline.
-5. **Grant permissions**: on first launch, allow **microphone/audio access** if prompted, and accept notifications if you intend to use future reminder features.  For haptic feedback to work, ensure the device is not in silent mode.
+## Option B: Host on Computer, open in iOS Safari
+1. From repo root on your computer, start a local static server:
 
-## Tips
+```bash
+python3 -m http.server 6969
+```
 
-- If you update the app files (e.g. replace `app.js` or `manifest.webmanifest`), you may need to clear the browser cache.  Incrementing the `version` in `manifest.webmanifest` and the cache name in `service-worker.js` ensures the device fetches the latest code.
-- On iOS, audio can only start after a user gesture.  Tap **Start explore** or **Play** to initialise the audio context.  Voice prompts and echoes use the Speech Synthesis and Web Audio APIs and may require interaction before they work.
+2. Find your computer LAN IP (for example `192.168.1.25`).
+3. On iPhone/iPad Safari, open:
 
-By following these steps you can enjoy the Schumann Resonance Lab on your iPhone without relying on an external web server.  This method also works for iPad or other iOS devices that support PWA installation.
+```text
+http://<your-computer-ip>:6969
+```
+
+4. Tap `Start Explore` or `Start Meditate` to initialize audio.
+
+## iOS Audio Behavior Notes
+- iOS requires a user gesture before audio can start.
+- Background behavior is platform-controlled and can vary by iOS/Safari version.
+- In many iOS Safari cases, Web Audio may be interrupted when Safari/web app goes to background.
+- This app now attempts automatic `AudioContext` resume when returning to foreground.
+
+## Background Audio Test (Recommended)
+Use headphones and medium volume.
+
+1. Open the app in Safari and tap `Start Explore`.
+2. Confirm continuous audio for at least 20 seconds.
+3. Press Home / swipe to app switcher to background Safari for 15-30 seconds.
+4. Return to Safari.
+5. Observe outcome:
+   - PASS-A: audio continued in background and is still playing.
+   - PASS-B: audio paused in background but resumed automatically on return.
+   - WARN: audio stopped and required tapping `Start Explore` again.
+6. Repeat from Home Screen shortcut (if installed) because behavior may differ from normal Safari tab.
+
+## Troubleshooting
+- If silent on launch: tap Start again (first-gesture policy).
+- If audio fails after app switching: tap Stop then Start.
+- If assets fail to load: ensure URL uses `http://` and not `file://`.
+- If reverb/chords are missing: verify files exist:
+  - `assets/ir/forest.wav`
+  - `assets/ir/temple.wav`
+  - `assets/chords/manifest.json`
+
+## Quick Validation URLs
+- App root: `http://<host>:6969/`
+- Chord manifest: `http://<host>:6969/assets/chords/manifest.json`
+- Forest IR: `http://<host>:6969/assets/ir/forest.wav`
+- Temple IR: `http://<host>:6969/assets/ir/temple.wav`
+
+## References
+- Apple iPhone User Guide (Add to Home Screen): https://support.apple.com/en-ie/guide/iphone/iphea86e5236/ios
+- MDN `BaseAudioContext.state` (`interrupted` behavior notes): https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state
+- WebKit bug tracker (recent iOS background audio interruption reports): https://bugs.webkit.org/show_bug.cgi?id=281955
