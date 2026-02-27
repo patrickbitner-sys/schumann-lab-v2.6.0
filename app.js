@@ -185,7 +185,14 @@ function startChordProgression(audibleHz) {
     synth: 'sawtooth',
     guitar: 'square'
   };
+  const chordGainMap = {
+    piano: 0.10,
+    harp: 0.10,
+    synth: 0.09,
+    guitar: 0.16
+  };
   const waveform = waveformMap[chordInstrument] || 'sine';
+  const chordGainValue = chordGainMap[chordInstrument] || 0.10;
   // Define a basic chord progression: major triads and related chords
   const chords = [
     [1, 5 / 4, 3 / 2],    // Major triad
@@ -215,7 +222,7 @@ function startChordProgression(audibleHz) {
       osc.type = waveform;
       osc.frequency.value = audibleHz * mult;
       const g = audioCtx.createGain();
-      g.gain.value = 0.1;
+      g.gain.value = chordGainValue;
       // Route each note into the shared panner instead of directly to the master
       osc.connect(g).connect(chordPan).connect(masterGain);
       osc.start();
@@ -351,6 +358,15 @@ function sortChordLoops(loops) {
   return withScore;
 }
 
+function getLoopCategory(entry) {
+  const file = String((entry && entry.file) || '').toLowerCase();
+  if (file.includes('user_reference__')) return 'Reference / Favorites';
+  if (file.includes('mammoth_synth_chords__')) return 'Mammoth Synth Chords';
+  if (file.includes('schumann_app_audio_samples__')) return 'Schumann App Audio Samples';
+  if (file.includes('ck2_')) return 'Cool Keys';
+  return 'Other';
+}
+
 /**
  * Ensure that an AudioBuffer for the requested instrument and file is
  * available in the cache.  If not already cached, fetches the WAV file
@@ -405,9 +421,37 @@ async function startChordLoop() {
   chordBufferSource = src;
 }
 
+function getAudioBufferRms(buffer) {
+  if (!buffer) return 0;
+  const channels = buffer.numberOfChannels || 0;
+  if (!channels) return 0;
+  let sum = 0;
+  let count = 0;
+  for (let c = 0; c < channels; c++) {
+    const data = buffer.getChannelData(c);
+    for (let i = 0; i < data.length; i++) {
+      const v = data[i];
+      sum += v * v;
+      count++;
+    }
+  }
+  return count ? Math.sqrt(sum / count) : 0;
+}
+
+function getCompensatedIrWetGain(name, buffer) {
+  // Start with mode-specific defaults.
+  const baseWet = name === 'temple' ? 0.42 : 0.58;
+  const rms = getAudioBufferRms(buffer);
+  if (!Number.isFinite(rms) || rms <= 0) return baseWet;
+  // Normalize wildly different IR loudness profiles to a comparable wet level.
+  const targetRms = 0.12;
+  const comp = Math.max(0.05, Math.min(1.5, targetRms / rms));
+  return Math.max(0.03, Math.min(0.95, baseWet * comp));
+}
+
 /**
- * Load an impulse response buffer for the given name.  Caches the result to
- * avoid repeated decodes.  Returns a promise that resolves with the
+ * Load an impulse response buffer for the given name. Caches the result to
+ * avoid repeated decodes. Returns a promise that resolves with the
  * AudioBuffer or null if loading fails.
  * @param {string} name
  */
@@ -437,6 +481,8 @@ async function loadIRBuffer(name) {
       if (!resp.ok) continue;
       const arrayBuf = await resp.arrayBuffer();
       const buf = await audioCtx.decodeAudioData(arrayBuf);
+      const rms = getAudioBufferRms(buf);
+      console.info(`[IR] loaded ${name}: ${buf.duration.toFixed(2)}s, rms=${rms.toFixed(5)}`);
       irBuffers[name] = buf;
       return buf;
     } catch (e) {
@@ -459,6 +505,7 @@ function updateChordLoopUI() {
   // Always hide by default
   chordLoopRow.hidden = true;
   chordLoopRow.style.display = 'none';
+  chordLoopSelect.disabled = false;
   selectedChordLoop = null;
   // Only show loops when there is a manifest and an instrument other than none
   if (!chordManifest || !chordInstrument || chordInstrument === 'none') {
@@ -466,18 +513,65 @@ function updateChordLoopUI() {
   }
   const loops = chordManifest[chordInstrument];
   if (!Array.isArray(loops) || loops.length === 0) {
+    if (chordInstrument === 'guitar') {
+      chordLoopSelect.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'No guitar loops installed (using synth fallback)';
+      chordLoopSelect.appendChild(opt);
+      chordLoopSelect.disabled = true;
+      chordLoopRow.hidden = false;
+      chordLoopRow.style.display = '';
+    }
     return;
   }
+  chordLoopSelect.disabled = false;
   const rankedLoops = sortChordLoops(loops);
-  // Populate selector
+  const previousSelection = selectedChordLoop;
+  // Populate selector with categories to keep large libraries navigable.
   chordLoopSelect.innerHTML = '';
-  rankedLoops.forEach(({ loop: entry }, idx) => {
+
+  // Top recommendations (small, immediately accessible set).
+  const topRecommended = rankedLoops.slice(0, Math.min(8, rankedLoops.length));
+  const recommendedGroup = document.createElement('optgroup');
+  recommendedGroup.label = 'Recommended';
+  topRecommended.forEach(({ loop: entry }, idx) => {
     const opt = document.createElement('option');
     opt.value = entry.file;
-    opt.textContent = idx === 0 ? `Recommended: ${entry.name || entry.file}` : (entry.name || entry.file);
-    chordLoopSelect.appendChild(opt);
+    opt.textContent = idx === 0 ? `Top pick: ${entry.name || entry.file}` : (entry.name || entry.file);
+    recommendedGroup.appendChild(opt);
   });
-  // Select first loop by default
+  chordLoopSelect.appendChild(recommendedGroup);
+
+  // Remaining loops grouped by source/category.
+  const topSet = new Set(topRecommended.map(({ loop }) => loop.file));
+  const groupOrder = ['Reference / Favorites', 'Mammoth Synth Chords', 'Schumann App Audio Samples', 'Cool Keys', 'Other'];
+  const grouped = new Map(groupOrder.map((name) => [name, []]));
+  rankedLoops.forEach(({ loop }) => {
+    if (topSet.has(loop.file)) return;
+    const category = getLoopCategory(loop);
+    if (!grouped.has(category)) grouped.set(category, []);
+    grouped.get(category).push(loop);
+  });
+  groupOrder.forEach((category) => {
+    const entries = grouped.get(category) || [];
+    if (!entries.length) return;
+    const group = document.createElement('optgroup');
+    group.label = category;
+    entries.forEach((entry) => {
+      const opt = document.createElement('option');
+      opt.value = entry.file;
+      opt.textContent = entry.name || entry.file;
+      group.appendChild(opt);
+    });
+    chordLoopSelect.appendChild(group);
+  });
+
+  // Restore previous selection when possible.
+  if (previousSelection) {
+    const hasPrev = Array.from(chordLoopSelect.options).some((o) => o.value === previousSelection);
+    if (hasPrev) chordLoopSelect.value = previousSelection;
+  }
   selectedChordLoop = chordLoopSelect.value;
   chordLoopRow.hidden = false;
   chordLoopRow.style.display = '';
@@ -614,6 +708,8 @@ const depthRange   = $('depthRange');
 const depthLabel   = $('depthLabel');
 const volumeRange  = $('volumeRange');
 const volumeLabel  = $('volumeLabel');
+const toneMixRange = $('toneMixRange');
+const toneMixLabel = $('toneMixLabel');
 
 // Soundscape controls (Explore)
 const oceanRange = $('oceanRange');
@@ -1088,6 +1184,12 @@ function getCurrentBandHz() {
   return Number.isFinite(val) ? val : 7.83;
 }
 
+function getToneMix() {
+  const val = toneMixRange ? parseFloat(toneMixRange.value) : 1;
+  if (!Number.isFinite(val)) return 1;
+  return Math.max(0, Math.min(1, val));
+}
+
 // ---- Soundscape patterns ----
 function startBirdsPattern(level) {
   // Stop previous timer
@@ -1367,6 +1469,7 @@ function createBandSplitEchoCluster(audibleHz, freqHz, depthVal, options = {}) {
     echoGainScale = 0.26,
     leftDelaySec = 0.11,
     rightDelaySec = 0.14,
+    toneMix = 1,
     splitMin = 0.35,
     splitMax = 0.65
   } = options;
@@ -1376,7 +1479,7 @@ function createBandSplitEchoCluster(audibleHz, freqHz, depthVal, options = {}) {
   const leftDiff = freqHz * randFrac;
   const rightDiff = freqHz * (1 - randFrac);
 
-  baseGain.gain.value = depthVal * centerGainScale;
+  baseGain.gain.value = depthVal * centerGainScale * toneMix;
 
   const leftEchoOsc  = audioCtx.createOscillator();
   const rightEchoOsc = audioCtx.createOscillator();
@@ -1392,8 +1495,8 @@ function createBandSplitEchoCluster(audibleHz, freqHz, depthVal, options = {}) {
 
   const leftGain = audioCtx.createGain();
   const rightGain = audioCtx.createGain();
-  leftGain.gain.value = depthVal * echoGainScale;
-  rightGain.gain.value = depthVal * echoGainScale;
+  leftGain.gain.value = depthVal * echoGainScale * toneMix;
+  rightGain.gain.value = depthVal * echoGainScale * toneMix;
 
   const leftPan = audioCtx.createStereoPanner();
   const rightPan = audioCtx.createStereoPanner();
@@ -1440,14 +1543,19 @@ function startGraph(freqHz) {
   if (selectedIR && selectedIR !== 'none') {
     const conv = audioCtx.createConvolver();
     const wetGain = audioCtx.createGain();
-    // Keep a clear but non-washy wet level.
-    wetGain.gain.value = 0.5;
+    // Set to 0 until buffer loads; then apply IR-compensated wet gain.
+    wetGain.gain.value = 0;
     // Connect a copy of the master output into the convolver and then to the wet gain
     masterGain.connect(conv);
     conv.connect(wetGain).connect(audioCtx.destination);
     // Asynchronously load the IR buffer if necessary and assign it
     loadIRBuffer(selectedIR).then((buf) => {
-      if (buf) conv.buffer = buf;
+      if (buf) {
+        conv.buffer = buf;
+        const wet = getCompensatedIrWetGain(selectedIR, buf);
+        wetGain.gain.value = wet;
+        console.info(`[IR] active ${selectedIR}: wetGain=${wet.toFixed(3)}`);
+      }
     }).catch(() => {
       // Ignore errors: if the file cannot be loaded the convolver will simply
       // output silence.
@@ -1490,8 +1598,9 @@ function startGraph(freqHz) {
   baseOsc.type = 'sine';
   baseOsc.frequency.value = audibleHz;
   const depthVal = depthRange ? parseFloat(depthRange.value) : 0.7;
+  const toneMix = getToneMix();
   // Set a default gain which may be modified below
-  baseGain.gain.value = depthVal * 0.6;
+  baseGain.gain.value = depthVal * 0.6 * toneMix;
   baseOsc.connect(baseGain);
   baseGain.connect(masterGain);
   // Create stimulation according to mode
@@ -1506,10 +1615,10 @@ function startGraph(freqHz) {
     modOsc.type = 'sine';
     modOsc.frequency.value = freqHz;
     const modGain = audioCtx.createGain();
-    modGain.gain.value = depthVal * 0.3;
+    modGain.gain.value = depthVal * 0.3 * toneMix;
     // Offset to keep the signal positive
     const offset = audioCtx.createConstantSource();
-    offset.offset.value = depthVal * 0.3;
+    offset.offset.value = depthVal * 0.3 * toneMix;
     // Connect modulator and offset to baseGain.gain
     modOsc.connect(modGain);
     modGain.connect(baseGain.gain);
@@ -1531,8 +1640,8 @@ function startGraph(freqHz) {
     rightOsc.frequency.value = audibleHz - halfDiff;
     const leftGain  = audioCtx.createGain();
     const rightGain = audioCtx.createGain();
-    leftGain.gain.value  = depthVal * 0.6;
-    rightGain.gain.value = depthVal * 0.6;
+    leftGain.gain.value  = depthVal * 0.6 * toneMix;
+    rightGain.gain.value = depthVal * 0.6 * toneMix;
     const leftPan  = audioCtx.createStereoPanner();
     const rightPan = audioCtx.createStereoPanner();
     leftPan.pan.value  = -1;
@@ -1543,14 +1652,9 @@ function startGraph(freqHz) {
     rightOsc.start();
     extraNodes.push(leftOsc, rightOsc, leftGain, rightGain, leftPan, rightPan);
   } else if (stimulationMode === 'ambient') {
-    // Ambient Echo: keep the carrier present but subtle, and add left/right
-    // echoes whose total frequency delta equals the selected band.
-    createBandSplitEchoCluster(audibleHz, freqHz, depthVal, {
-      centerGainScale: 0.15,
-      echoGainScale: 0.18,
-      leftDelaySec: 0.18,
-      rightDelaySec: 0.24
-    });
+    // Ambient Echo is tone-free: no carrier and no tonal L/R echo oscillators.
+    // Only ambience layers (and optional chord layer) are heard.
+    baseGain.gain.value = 0;
   } else {
     // Spatial Echo: same delta-f split principle, with a slightly stronger
     // centre than Ambient Echo and shorter delay taps.
@@ -1558,7 +1662,8 @@ function startGraph(freqHz) {
       centerGainScale: 0.21,
       echoGainScale: 0.26,
       leftDelaySec: 0.11,
-      rightDelaySec: 0.14
+      rightDelaySec: 0.14,
+      toneMix
     });
   }
   // Noise buffer (used when no high‑quality sample is available)
@@ -1788,8 +1893,10 @@ function updateDepthLabel() {
   if (!depthRange || !depthLabel) return;
   const depth = parseFloat(depthRange.value) || 0.7;
   depthLabel.textContent = `${Math.round(depth * 100)}%`;
-  if (baseGain && audioCtx) {
-    baseGain.gain.setValueAtTime(depth * 0.6, audioCtx.currentTime);
+  // Depth influences mode-specific graph wiring; restart when running.
+  if (baseOsc) {
+    const currentBand = getCurrentBandHz();
+    startGraph(currentBand);
   }
 }
 
@@ -1799,6 +1906,17 @@ function updateVolumeLabel() {
   volumeLabel.textContent = `${Math.round(vol * 100)}%`;
   if (masterGain && audioCtx) {
     masterGain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  }
+}
+
+function updateToneMixLabel() {
+  if (!toneMixRange || !toneMixLabel) return;
+  const mix = getToneMix();
+  toneMixLabel.textContent = `${Math.round(mix * 100)}%`;
+  // Tone mix affects mode-specific graph gains; restart when running.
+  if (baseOsc) {
+    const currentBand = getCurrentBandHz();
+    startGraph(currentBand);
   }
 }
 
@@ -2335,6 +2453,7 @@ if (clearBestPhase) clearBestPhase.addEventListener('click', () => {
 if (carrierRange) carrierRange.addEventListener('input', updateCarrierLabel);
 if (depthRange)   depthRange.addEventListener('input', updateDepthLabel);
 if (volumeRange)  volumeRange.addEventListener('input', updateVolumeLabel);
+if (toneMixRange) toneMixRange.addEventListener('input', updateToneMixLabel);
 
 // Soundscape sliders (Explore)
 if (oceanRange) oceanRange.addEventListener('input', () => {
@@ -2433,6 +2552,7 @@ updateSweepLabel();
 updateCarrierLabel();
 updateDepthLabel();
 updateVolumeLabel();
+updateToneMixLabel();
 updateSessionLabel();
 updateSoundscapeLabels();
 updateBreathAnimation();

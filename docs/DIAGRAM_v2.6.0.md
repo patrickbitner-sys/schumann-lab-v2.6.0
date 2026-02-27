@@ -18,9 +18,8 @@ flowchart TD
   MODE --> AM[AM: carrier amplitude modulation]
   MODE --> BIN[Binaural: L/R split by band/2]
   MODE --> SPAT[Spatial Echo: center + L/R delayed echoes]
-  MODE --> AMB[Ambient Echo: subtle center + L/R delayed echoes\nplus extra ambience delay taps]
+  MODE --> AMB[Ambient Echo: tone-free ambience\nplus extra ambience delay taps]
   SPAT --> DF[Echo pitch split rule:\nleft offset + right offset = selected band]
-  AMB --> DF
 
   CHORD --> MAN[assets/chords/manifest.json]
   CHORD --> PREF[assets/chords/preferences.json]
