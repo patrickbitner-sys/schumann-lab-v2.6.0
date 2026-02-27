@@ -1355,6 +1355,68 @@ function stopCurrentAudio() {
   wavesGain = null;
 }
 
+/**
+ * Create a stereo echo cluster where left/right frequency offsets always sum
+ * to the selected Schumann band (delta f = band).  The centre tone stays at
+ * the original carrier and can be set to a subtle level for reduced fatigue.
+ */
+function createBandSplitEchoCluster(audibleHz, freqHz, depthVal, options = {}) {
+  if (!audioCtx || !masterGain || !baseGain || !baseOsc) return;
+  const {
+    centerGainScale = 0.21,  // ~ -9 dB vs the default 0.6 gain path
+    echoGainScale = 0.26,
+    leftDelaySec = 0.11,
+    rightDelaySec = 0.14,
+    splitMin = 0.35,
+    splitMax = 0.65
+  } = options;
+
+  // Keep left/right split constrained to avoid hard-fatiguing extremes.
+  const randFrac = splitMin + Math.random() * (splitMax - splitMin);
+  const leftDiff = freqHz * randFrac;
+  const rightDiff = freqHz * (1 - randFrac);
+
+  baseGain.gain.value = depthVal * centerGainScale;
+
+  const leftEchoOsc  = audioCtx.createOscillator();
+  const rightEchoOsc = audioCtx.createOscillator();
+  leftEchoOsc.type = 'sine';
+  rightEchoOsc.type = 'sine';
+  leftEchoOsc.frequency.value = audibleHz + leftDiff;
+  rightEchoOsc.frequency.value = audibleHz - rightDiff;
+
+  const leftDelay = audioCtx.createDelay();
+  const rightDelay = audioCtx.createDelay();
+  leftDelay.delayTime.value = leftDelaySec;
+  rightDelay.delayTime.value = rightDelaySec;
+
+  const leftGain = audioCtx.createGain();
+  const rightGain = audioCtx.createGain();
+  leftGain.gain.value = depthVal * echoGainScale;
+  rightGain.gain.value = depthVal * echoGainScale;
+
+  const leftPan = audioCtx.createStereoPanner();
+  const rightPan = audioCtx.createStereoPanner();
+  leftPan.pan.value = -1;
+  rightPan.pan.value = 1;
+
+  leftEchoOsc.connect(leftDelay).connect(leftGain).connect(leftPan).connect(masterGain);
+  rightEchoOsc.connect(rightDelay).connect(rightGain).connect(rightPan).connect(masterGain);
+  leftEchoOsc.start();
+  rightEchoOsc.start();
+
+  extraNodes.push(
+    leftEchoOsc,
+    rightEchoOsc,
+    leftDelay,
+    rightDelay,
+    leftGain,
+    rightGain,
+    leftPan,
+    rightPan
+  );
+}
+
 function startGraph(freqHz) {
   stopCurrentAudio();
   ensureAudio();
@@ -1373,15 +1435,13 @@ function startGraph(freqHz) {
   analyser.connect(audioCtx.destination);
 
   // If a reverb space is selected, set up a convolver in parallel with the dry path.
-  // The dry signal continues through analyser → destination.  We send a copy of
-  // masterGain into the convolver and mix the wet signal back to the destination
-  // via a gain node for level control.  The wet/dry ratio is fixed here but can
-  // be exposed via UI if desired.
+  // Because this taps the master bus, ALL sources routed to masterGain (tone,
+  // soundscapes, chords, and echo layers) receive the selected IR.
   if (selectedIR && selectedIR !== 'none') {
     const conv = audioCtx.createConvolver();
     const wetGain = audioCtx.createGain();
-    // Moderately subtle reverb level
-    wetGain.gain.value = 0.4;
+    // Keep a clear but non-washy wet level.
+    wetGain.gain.value = 0.5;
     // Connect a copy of the master output into the convolver and then to the wet gain
     masterGain.connect(conv);
     conv.connect(wetGain).connect(audioCtx.destination);
@@ -1394,12 +1454,7 @@ function startGraph(freqHz) {
     });
     extraNodes.push(conv, wetGain);
   }
-  // Clear any extra nodes from previous mode
-  extraNodes.forEach((node) => {
-    try { node.stop(); } catch {}
-    try { node.disconnect(); } catch {}
-  });
-  extraNodes = [];
+
   // When restarting the graph we also clear any existing motion panners
   if (motionPanners && motionPanners.length) {
     motionPanners.forEach((p) => {
@@ -1488,49 +1543,23 @@ function startGraph(freqHz) {
     rightOsc.start();
     extraNodes.push(leftOsc, rightOsc, leftGain, rightGain, leftPan, rightPan);
   } else if (stimulationMode === 'ambient') {
-    // Ambient mode: no tonal oscillators here (baseGain.gain is set to zero at
-    // the top of this conditional).  Echoes for soundscapes are added later
-    // after the ambience gains are created.  Nothing else to set up here.
-    baseGain.gain.value = 0;
-    // No additional oscillators for ambient mode.  Chord progression (if
-    // selected) is still allowed and will be added after sources are set up.
+    // Ambient Echo: keep the carrier present but subtle, and add left/right
+    // echoes whose total frequency delta equals the selected band.
+    createBandSplitEchoCluster(audibleHz, freqHz, depthVal, {
+      centerGainScale: 0.15,
+      echoGainScale: 0.18,
+      leftDelaySec: 0.18,
+      rightDelaySec: 0.24
+    });
   } else {
-    // Spatial echo: create a centre tone and two echo tones.  The centre tone
-    // remains baseOsc/baseGain.  The echo pitches are randomly split so that
-    // their combined frequency offset equals the band frequency.  For example,
-    // if the band is 7.83 Hz and the random fraction is 0.2, the left echo
-    // will be raised by 0.2×7.83 and the right echo will be lowered by
-    // (1−0.2)×7.83 = 0.8×7.83.  This yields a more organic binaural beat
-    // while preserving the overall difference of freqHz.
-    baseGain.gain.value = depthVal * 0.4;
-    const randFrac = Math.random() * 0.8 + 0.1; // range 0.1–0.9
-    const leftDiff = freqHz * randFrac;
-    const rightDiff = freqHz * (1 - randFrac);
-    const leftEchoOsc  = audioCtx.createOscillator();
-    const rightEchoOsc = audioCtx.createOscillator();
-    leftEchoOsc.type  = 'sine';
-    rightEchoOsc.type = 'sine';
-    leftEchoOsc.frequency.value  = audibleHz + leftDiff;
-    rightEchoOsc.frequency.value = audibleHz - rightDiff;
-    const leftDelay  = audioCtx.createDelay();
-    const rightDelay = audioCtx.createDelay();
-    // Use short delays to create an echo/spatial feel (100–120 ms)
-    leftDelay.delayTime.value  = 0.10;
-    rightDelay.delayTime.value = 0.12;
-    const leftGain  = audioCtx.createGain();
-    const rightGain = audioCtx.createGain();
-    // Echoes are slightly quieter than the centre
-    leftGain.gain.value  = depthVal * 0.3;
-    rightGain.gain.value = depthVal * 0.3;
-    const leftPan  = audioCtx.createStereoPanner();
-    const rightPan = audioCtx.createStereoPanner();
-    leftPan.pan.value  = -1;
-    rightPan.pan.value = 1;
-    leftEchoOsc.connect(leftDelay).connect(leftGain).connect(leftPan).connect(masterGain);
-    rightEchoOsc.connect(rightDelay).connect(rightGain).connect(rightPan).connect(masterGain);
-    leftEchoOsc.start();
-    rightEchoOsc.start();
-    extraNodes.push(leftEchoOsc, rightEchoOsc, leftDelay, rightDelay, leftGain, rightGain, leftPan, rightPan);
+    // Spatial Echo: same delta-f split principle, with a slightly stronger
+    // centre than Ambient Echo and shorter delay taps.
+    createBandSplitEchoCluster(audibleHz, freqHz, depthVal, {
+      centerGainScale: 0.21,
+      echoGainScale: 0.26,
+      leftDelaySec: 0.11,
+      rightDelaySec: 0.14
+    });
   }
   // Noise buffer (used when no high‑quality sample is available)
   const buffer = createNoiseBuffer(audioCtx);
@@ -1666,12 +1695,8 @@ wavesGain.connect(wavesPan).connect(masterGain);
 motionPanners.push(wavesPan);
 extraNodes.push(wavesPan);
 
-  // If ambient echo mode is selected, apply spatial echo to the soundscapes
-  // instead of the tone.  We leave the direct connections to masterGain
-  // intact so the primary soundscapes play normally, then add delayed,
-  // panned echoes on top for a natural stereo ambience.  No central tone
-  // is heard because baseGain.gain is set to zero at the top of the
-  // stimulationMode conditional.
+  // If ambient echo mode is selected, apply additional delayed ambience taps
+  // to the soundscape layers for a wide, low-fatigue space.
   if (stimulationMode === 'ambient') {
     // Create delays and panners for left and right echoes
     const leftDelay  = audioCtx.createDelay();
@@ -1696,6 +1721,10 @@ extraNodes.push(wavesPan);
     if (rainGain) {
       rainGain.connect(leftDelay);
       rainGain.connect(rightDelay);
+    }
+    if (birdsGain) {
+      birdsGain.connect(leftDelay);
+      birdsGain.connect(rightDelay);
     }
     if (wavesGain) {
       wavesGain.connect(leftDelay);
