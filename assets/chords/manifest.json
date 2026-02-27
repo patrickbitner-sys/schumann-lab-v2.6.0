@@ -907,52 +907,84 @@
   ],
   "guitar": [
     {
-      "file": "library/gtr_dumble_ambient_72_Fmaj7_cycle06.wav",
-      "name": "gtr dumble ambient 72 Fmaj7 cycle06"
+      "file": "library/gtr_real_mr_acoustic_nylstr_85_ambient_c_01.wav",
+      "name": "gtr real mr acoustic nylstr 85 ambient c 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_74_Dm9_cycle04.wav",
-      "name": "gtr dumble ambient 74 Dm9 cycle04"
+      "file": "library/gtr_real_mr_acoustic_nylstr_85_ambient_d_01.wav",
+      "name": "gtr real mr acoustic nylstr 85 ambient d 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_76_Csus2_cycle08.wav",
-      "name": "gtr dumble ambient 76 Csus2 cycle08"
+      "file": "library/gtr_real_mr_acoustic_nylstr_85_ambient_e_01.wav",
+      "name": "gtr real mr acoustic nylstr 85 ambient e 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_78_Cmaj7_cycle01.wav",
-      "name": "gtr dumble ambient 78 Cmaj7 cycle01"
+      "file": "library/gtr_real_mr_acoustic_nylstr_85_ambient_g_01.wav",
+      "name": "gtr real mr acoustic nylstr 85 ambient g 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_80_Amadd9_cycle02.wav",
-      "name": "gtr dumble ambient 80 Amadd9 cycle02"
+      "file": "library/gtr_real_mr_acoustic_sixstr_85_ambient_c_01.wav",
+      "name": "gtr real mr acoustic sixstr 85 ambient c 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_80_Emin9_cycle11.wav",
-      "name": "gtr dumble ambient 80 Emin9 cycle11"
+      "file": "library/gtr_real_mr_acoustic_sixstr_85_ambient_d_01.wav",
+      "name": "gtr real mr acoustic sixstr 85 ambient d 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_82_G6_cycle03.wav",
-      "name": "gtr dumble ambient 82 G6 cycle03"
+      "file": "library/gtr_real_mr_acoustic_sixstr_85_ambient_e_01.wav",
+      "name": "gtr real mr acoustic sixstr 85 ambient e 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_84_Gsus2_cycle07.wav",
-      "name": "gtr dumble ambient 84 Gsus2 cycle07"
+      "file": "library/gtr_real_mr_acoustic_sixstr_85_ambient_g_01.wav",
+      "name": "gtr real mr acoustic sixstr 85 ambient g 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_86_Dadd9_cycle10.wav",
-      "name": "gtr dumble ambient 86 Dadd9 cycle10"
+      "file": "library/gtr_real_mr_strat_ambient_amaj_01.wav",
+      "name": "gtr real mr strat ambient amaj 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_88_Em7_cycle05.wav",
-      "name": "gtr dumble ambient 88 Em7 cycle05"
+      "file": "library/gtr_real_mr_strat_ambient_amin_01.wav",
+      "name": "gtr real mr strat ambient amin 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_90_Amin7_cycle09.wav",
-      "name": "gtr dumble ambient 90 Amin7 cycle09"
+      "file": "library/gtr_real_mr_strat_ambient_cmaj_01.wav",
+      "name": "gtr real mr strat ambient cmaj 01"
     },
     {
-      "file": "library/gtr_dumble_ambient_92_Cmaj9_cycle12.wav",
-      "name": "gtr dumble ambient 92 Cmaj9 cycle12"
+      "file": "library/gtr_real_mr_strat_ambient_cmin_01.wav",
+      "name": "gtr real mr strat ambient cmin 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_dmaj_01.wav",
+      "name": "gtr real mr strat ambient dmaj 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_dmin_01.wav",
+      "name": "gtr real mr strat ambient dmin 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_emaj_01.wav",
+      "name": "gtr real mr strat ambient emaj 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_emin_01.wav",
+      "name": "gtr real mr strat ambient emin 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_fmaj_01.wav",
+      "name": "gtr real mr strat ambient fmaj 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_fmin_01.wav",
+      "name": "gtr real mr strat ambient fmin 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_gmaj_01.wav",
+      "name": "gtr real mr strat ambient gmaj 01"
+    },
+    {
+      "file": "library/gtr_real_mr_strat_ambient_gmin_01.wav",
+      "name": "gtr real mr strat ambient gmin 01"
     }
   ]
 }

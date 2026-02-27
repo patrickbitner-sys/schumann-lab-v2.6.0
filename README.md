@@ -5,7 +5,7 @@ Browser-first Schumann resonance meditation lab with:
 - Soundscape mixing (ocean, rain, birds, waves)
 - Chord layers with recommendation ranking and user preferences
 - Mobile-aware chord manifests (`manifest.mobile.json` fallback on iOS/Android)
-- Built-in meditation guitar loop library (`gtr_dumble_ambient_*`)
+- Built-in real meditation guitar loop library (`gtr_real_mr_*`)
 - Forest/Temple convolution reverb
 - Guided phase A/B finder (to 18° resolution), autosweep, meditation timer, and journal/history persistence
 

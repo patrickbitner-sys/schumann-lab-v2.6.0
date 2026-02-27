@@ -12,23 +12,23 @@
 - Added `assets/chords/manifest.mobile.json` for mobile/PWA stability.
 
 ## Current Library Size
-- Files in `assets/chords/library`: **237**
-- Total disk size: **~442 MB**
+- Files in `assets/chords/library`: **245**
+- Total disk size: **~428 MB**
 - Manifest counts (`manifest.json`):
   - piano: 27
   - harp: 13
   - synth: 185
-  - guitar: 12
+  - guitar: 20
 - Mobile manifest counts (`manifest.mobile.json`):
   - piano: 27
   - harp: 13
   - synth: 88
-  - guitar: 12
+  - guitar: 20
 
 ## Mobile Reliability Strategy
 - iPhone/Android now prefer `manifest.mobile.json` automatically.
 - Desktop continues using full `manifest.json`.
-- This keeps recommended/favorite loops while reducing the available mobile loop set from **237 -> 140**.
+- This keeps recommended/favorite loops while reducing the available mobile loop set from **245 -> 148**.
 
 ## Suggested Next Removals (If You Want A Smaller Full Library)
 - First candidates:
@@ -39,7 +39,8 @@
   - `CK2_125_Gm_*`
   - `MSC_*[sus]-C*` and `MSC_*Cmaj7*` families
   - `user_reference__piano_gentle_1_Reference-style.wav`
-  - `gtr_dumble_ambient_*` (new default guitar library)
+  - `gtr_real_mr_strat_ambient_*` (real Strat-based loops)
+  - `gtr_real_mr_acoustic_*` (real acoustic support loops)
 
 ## Practical Trim Targets
 - Light trim target: **120-150 loops total**

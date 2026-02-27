@@ -1,12 +1,18 @@
 # Guitar Loop Sourcing Guide (v2.6.1)
 
 ## Current In-Repo Guitar Library
-- Generated baseline library is now present under `assets/chords/library/`:
-  - files named `gtr_dumble_ambient_*`
+- Real imported baseline library is now present under `assets/chords/library/`:
+  - files named `gtr_real_mr_strat_ambient_*` and `gtr_real_mr_acoustic_*`
   - instrument-detected as `guitar` in `manifest.json`
-- Generator script:
+- Source packs used:
+  - MusicRadar Western Guitar Samples:
+    - https://www.musicradar.com/news/guitars/sampleradar-629-free-western-guitar-samples-627787
+    - direct zip: https://cdn.mos.musicradar.com/audio/samples/musicradar-western-guitar-samples.zip
+  - MusicRadar Acoustic Guitar Samples:
+    - https://www.musicradar.com/news/sampleradar-1000-free-acoustic-guitar-samples
+    - direct zip: https://cdn.mos.musicradar.com/audio/samples/musicradar-acoustic-guitar-samples.zip
+- Optional synthetic generator (kept for future fallback):
   - `tools/generate_guitar_meditation_loops.py`
-- These are synthetic placeholders tuned for calming sessions; replace/augment with your real Strat/Dumble captures when ready.
 
 ## Target Loop Profile For Schumann Lab
 - Tempo: **70-110 BPM** preferred (calmer cadence, less fatigue)
