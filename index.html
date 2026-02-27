@@ -8,7 +8,13 @@
   </head>
   <body>
     <main class="wrap">
-      <h1>Schumann Resonance Lab</h1>
+      <header class="hero">
+        <div class="hero-top">
+          <h1>Schumann Resonance Lab</h1>
+          <span id="appVersionBadge" class="version-badge">v2.6.1-dev</span>
+        </div>
+        <p class="hero-subtitle">Breath-synced resonance, calming spatial fields, and phase-guided tuning.</p>
+      </header>
 
       <div class="tabs">
         <button class="tab active" data-view="explore">Explore</button>
@@ -84,6 +90,18 @@
               <button id="sweepToggle" class="btn">Start autosweep</button>
               <button id="markStrongest" class="btn">Mark Strongest</button>
               <button id="clearBestPhase" class="btn">Clear Best</button>
+            </div>
+            <div class="row mt8">
+              <button id="phaseABStart" class="btn primary">Start Phase A/B Finder</button>
+            </div>
+            <div id="phaseABPanel" class="phase-ab-panel" hidden>
+              <p id="phaseABPrompt" class="small">A/B finder idle</p>
+              <div class="row">
+                <button id="phaseChooseA" class="btn" disabled>A Felt Better</button>
+                <button id="phaseChooseB" class="btn" disabled>B Felt Better</button>
+                <button id="phaseChooseSame" class="btn" disabled>No Difference</button>
+                <button id="phaseReplay" class="btn" disabled>Replay A→B</button>
+              </div>
             </div>
 
             <p class="small">Best phase: <strong id="bestPhaseDisplay">Not set yet</strong></p>

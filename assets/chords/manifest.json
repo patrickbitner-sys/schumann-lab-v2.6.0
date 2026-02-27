@@ -105,110 +105,6 @@
       "name": "mammoth synth chords  CL2 150 E PNO1"
     },
     {
-      "file": "library/schumann_app_audio_samples__CK2_120_C_PNO1.wav",
-      "name": "schumann app audio samples  CK2 120 C PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_120_C_PNO2.wav",
-      "name": "schumann app audio samples  CK2 120 C PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Cm_PNO1.wav",
-      "name": "schumann app audio samples  CK2 125 Cm PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Cm_PNO2.wav",
-      "name": "schumann app audio samples  CK2 125 Cm PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Gm_PNO1.wav",
-      "name": "schumann app audio samples  CK2 125 Gm PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Gm_PNO2.wav",
-      "name": "schumann app audio samples  CK2 125 Gm PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_A#_PNO1.wav",
-      "name": "schumann app audio samples  CK2 130 A# PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_A#_PNO2.wav",
-      "name": "schumann app audio samples  CK2 130 A# PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_C_PNO1.wav",
-      "name": "schumann app audio samples  CK2 130 C PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_C_PNO2.wav",
-      "name": "schumann app audio samples  CK2 130 C PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_Gm_PNO1.wav",
-      "name": "schumann app audio samples  CK2 130 Gm PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_Gm_PNO2.wav",
-      "name": "schumann app audio samples  CK2 130 Gm PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_C_PNO1.wav",
-      "name": "schumann app audio samples  CK2 135 C PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_C_PNO2.wav",
-      "name": "schumann app audio samples  CK2 135 C PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_Cm_PNO1.wav",
-      "name": "schumann app audio samples  CK2 135 Cm PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_Cm_PNO2.wav",
-      "name": "schumann app audio samples  CK2 135 Cm PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_C_PNO1.wav",
-      "name": "schumann app audio samples  CK2 140 C PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_C_PNO2.wav",
-      "name": "schumann app audio samples  CK2 140 C PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_G_PNO1.wav",
-      "name": "schumann app audio samples  CK2 140 G PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_G_PNO2.wav",
-      "name": "schumann app audio samples  CK2 140 G PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_145_Cm_PNO1.wav",
-      "name": "schumann app audio samples  CK2 145 Cm PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_145_Cm_PNO2.wav",
-      "name": "schumann app audio samples  CK2 145 Cm PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_150_E_PNO2.wav",
-      "name": "schumann app audio samples  CK2 150 E PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_155_C#_PNO1.wav",
-      "name": "schumann app audio samples  CK2 155 C# PNO1"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_155_C#_PNO2.wav",
-      "name": "schumann app audio samples  CK2 155 C# PNO2"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CL2_150_E_PNO1.wav",
-      "name": "schumann app audio samples  CL2 150 E PNO1"
-    },
-    {
       "file": "library/user_reference__piano_gentle_1_Reference-style.wav",
       "name": "user reference  piano gentle 1 Reference-style"
     }
@@ -265,58 +161,6 @@
     {
       "file": "library/mammoth_synth_chords__CK2_155_C#_HCRD.wav",
       "name": "mammoth synth chords  CK2 155 C# HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_120_C_HCRD.wav",
-      "name": "schumann app audio samples  CK2 120 C HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Cm_HCRD.wav",
-      "name": "schumann app audio samples  CK2 125 Cm HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Gm_HCRD.wav",
-      "name": "schumann app audio samples  CK2 125 Gm HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_A#_HCRD.wav",
-      "name": "schumann app audio samples  CK2 130 A# HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_C_HCRD.wav",
-      "name": "schumann app audio samples  CK2 130 C HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_Gm_HCRD.wav",
-      "name": "schumann app audio samples  CK2 130 Gm HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_C_HCRD.wav",
-      "name": "schumann app audio samples  CK2 135 C HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_Cm_HCRD.wav",
-      "name": "schumann app audio samples  CK2 135 Cm HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_C_HCRD.wav",
-      "name": "schumann app audio samples  CK2 140 C HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_G_HCRD.wav",
-      "name": "schumann app audio samples  CK2 140 G HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_145_Cm_HCRD.wav",
-      "name": "schumann app audio samples  CK2 145 Cm HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_150_E_HCRD.wav",
-      "name": "schumann app audio samples  CK2 150 E HCRD"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_155_C#_HCRD.wav",
-      "name": "schumann app audio samples  CK2 155 C# HCRD"
     }
   ],
   "synth": [
@@ -501,10 +345,6 @@
       "name": "mammoth synth chords  MSC AnaSaurus[140]-D"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_AnaSaurus[shrt]-A11.wav",
-      "name": "mammoth synth chords  MSC AnaSaurus[shrt]-A11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_AnaSaurus[shrt]-Bmin.wav",
       "name": "mammoth synth chords  MSC AnaSaurus[shrt]-Bmin"
     },
@@ -527,10 +367,6 @@
     {
       "file": "library/mammoth_synth_chords__MSC_AnaSaurus[shrt]-Gmaj7-9.wav",
       "name": "mammoth synth chords  MSC AnaSaurus[shrt]-Gmaj7-9"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_AnaSaurus[sus]-A11.wav",
-      "name": "mammoth synth chords  MSC AnaSaurus[sus]-A11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_AnaSaurus[sus]-Bmin.wav",
@@ -605,10 +441,6 @@
       "name": "mammoth synth chords  MSC CaeZars[shrt]-Fmaj7-9"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_CaeZars[shrt]-G11.wav",
-      "name": "mammoth synth chords  MSC CaeZars[shrt]-G11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_CaeZars[sus]-Amin.wav",
       "name": "mammoth synth chords  MSC CaeZars[sus]-Amin"
     },
@@ -633,10 +465,6 @@
       "name": "mammoth synth chords  MSC CaeZars[sus]-Fmaj7-9"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_CaeZars[sus]-G11.wav",
-      "name": "mammoth synth chords  MSC CaeZars[sus]-G11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_CexDouble-Amin.wav",
       "name": "mammoth synth chords  MSC CexDouble-Amin"
     },
@@ -651,10 +479,6 @@
     {
       "file": "library/mammoth_synth_chords__MSC_CexDouble-Dmin6.wav",
       "name": "mammoth synth chords  MSC CexDouble-Dmin6"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_CexDouble-E11.wav",
-      "name": "mammoth synth chords  MSC CexDouble-E11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_CexDouble-Fmaj7-9.wav",
@@ -681,52 +505,12 @@
       "name": "mammoth synth chords  MSC CexDouble[134]-G"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_CexDouble[170]-A.wav",
-      "name": "mammoth synth chords  MSC CexDouble[170]-A"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_CexDouble[170]-E.wav",
-      "name": "mammoth synth chords  MSC CexDouble[170]-E"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_DuoArpo-Amin.wav",
-      "name": "mammoth synth chords  MSC DuoArpo-Amin"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_DuoArpo-Bmaj7-9.wav",
-      "name": "mammoth synth chords  MSC DuoArpo-Bmaj7-9"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_DuoArpo-Cmin7.wav",
-      "name": "mammoth synth chords  MSC DuoArpo-Cmin7"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_DuoArpo-Dmin7-9.wav",
-      "name": "mammoth synth chords  MSC DuoArpo-Dmin7-9"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_DuoArpo-Emaj7.wav",
-      "name": "mammoth synth chords  MSC DuoArpo-Emaj7"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_DuoArpo-Fmaj7-9.wav",
-      "name": "mammoth synth chords  MSC DuoArpo-Fmaj7-9"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_DuoArpo-G11.wav",
-      "name": "mammoth synth chords  MSC DuoArpo-G11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_GrandEm-Amaj7.wav",
       "name": "mammoth synth chords  MSC GrandEm-Amaj7"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_GrandEm-Bmin6.wav",
       "name": "mammoth synth chords  MSC GrandEm-Bmin6"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_GrandEm-C11.wav",
-      "name": "mammoth synth chords  MSC GrandEm-C11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_GrandEm-Dmin.wav",
@@ -769,10 +553,6 @@
       "name": "mammoth synth chords  MSC GrandEm[140]-G"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_MallHaul-Amin7-9-11.wav",
-      "name": "mammoth synth chords  MSC MallHaul-Amin7-9-11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_MallHaul-Bmaj6.wav",
       "name": "mammoth synth chords  MSC MallHaul-Bmaj6"
     },
@@ -783,14 +563,6 @@
     {
       "file": "library/mammoth_synth_chords__MSC_MallHaul-Dmaj7.wav",
       "name": "mammoth synth chords  MSC MallHaul-Dmaj7"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_MallHaul-Emin6-11.wav",
-      "name": "mammoth synth chords  MSC MallHaul-Emin6-11"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_MallHaul-F11.wav",
-      "name": "mammoth synth chords  MSC MallHaul-F11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_MallHaul-G7-9.wav",
@@ -837,20 +609,8 @@
       "name": "mammoth synth chords  MSC Marsheen[128]-F"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_Marsheen[170]-C.wav",
-      "name": "mammoth synth chords  MSC Marsheen[170]-C"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Marsheen[170]-G.wav",
-      "name": "mammoth synth chords  MSC Marsheen[170]-G"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_Marsheen[shrt]-Amin6.wav",
       "name": "mammoth synth chords  MSC Marsheen[shrt]-Amin6"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Marsheen[shrt]-B11.wav",
-      "name": "mammoth synth chords  MSC Marsheen[shrt]-B11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_Marsheen[shrt]-Cmin.wav",
@@ -875,10 +635,6 @@
     {
       "file": "library/mammoth_synth_chords__MSC_Marsheen[sus]-Amin6.wav",
       "name": "mammoth synth chords  MSC Marsheen[sus]-Amin6"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Marsheen[sus]-B11.wav",
-      "name": "mammoth synth chords  MSC Marsheen[sus]-B11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_Marsheen[sus]-Cmin.wav",
@@ -913,10 +669,6 @@
       "name": "mammoth synth chords  MSC Neos-Cmin6"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_Neos-D11.wav",
-      "name": "mammoth synth chords  MSC Neos-D11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_Neos-Emin.wav",
       "name": "mammoth synth chords  MSC Neos-Emin"
     },
@@ -943,14 +695,6 @@
     {
       "file": "library/mammoth_synth_chords__MSC_Neos[134]-D.wav",
       "name": "mammoth synth chords  MSC Neos[134]-D"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Neos[170]-D.wav",
-      "name": "mammoth synth chords  MSC Neos[170]-D"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Neos[170]-G.wav",
-      "name": "mammoth synth chords  MSC Neos[170]-G"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_Phetta[120]-A.wav",
@@ -985,10 +729,6 @@
       "name": "mammoth synth chords  MSC Phetta[shrt]-Bmin6"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_Phetta[shrt]-C11.wav",
-      "name": "mammoth synth chords  MSC Phetta[shrt]-C11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_Phetta[shrt]-Dmin.wav",
       "name": "mammoth synth chords  MSC Phetta[shrt]-Dmin"
     },
@@ -1011,10 +751,6 @@
     {
       "file": "library/mammoth_synth_chords__MSC_Phetta[sus]-Bmin6.wav",
       "name": "mammoth synth chords  MSC Phetta[sus]-Bmin6"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Phetta[sus]-C11.wav",
-      "name": "mammoth synth chords  MSC Phetta[sus]-C11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_Phetta[sus]-Dmin.wav",
@@ -1045,10 +781,6 @@
       "name": "mammoth synth chords  MSC QuadMello-Cmaj7-9"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_QuadMello-D11.wav",
-      "name": "mammoth synth chords  MSC QuadMello-D11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_QuadMello-Emin.wav",
       "name": "mammoth synth chords  MSC QuadMello-Emin"
     },
@@ -1077,20 +809,8 @@
       "name": "mammoth synth chords  MSC Semafour[134]-E"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_Semafour[170]-A.wav",
-      "name": "mammoth synth chords  MSC Semafour[170]-A"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Semafour[170]-D.wav",
-      "name": "mammoth synth chords  MSC Semafour[170]-D"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_Semafour[shrt]-Amaj7-9.wav",
       "name": "mammoth synth chords  MSC Semafour[shrt]-Amaj7-9"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Semafour[shrt]-B11.wav",
-      "name": "mammoth synth chords  MSC Semafour[shrt]-B11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_Semafour[shrt]-Cmin.wav",
@@ -1115,10 +835,6 @@
     {
       "file": "library/mammoth_synth_chords__MSC_Semafour[sus]-Amaj7-9.wav",
       "name": "mammoth synth chords  MSC Semafour[sus]-Amaj7-9"
-    },
-    {
-      "file": "library/mammoth_synth_chords__MSC_Semafour[sus]-B11.wav",
-      "name": "mammoth synth chords  MSC Semafour[sus]-B11"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_Semafour[sus]-Cmin.wav",
@@ -1161,10 +877,6 @@
       "name": "mammoth synth chords  MSC Slinas-Emaj7-9"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_Slinas-F11.wav",
-      "name": "mammoth synth chords  MSC Slinas-F11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_Slinas-Gmin.wav",
       "name": "mammoth synth chords  MSC Slinas-Gmin"
     },
@@ -1185,893 +897,62 @@
       "name": "mammoth synth chords  MSC Synthos-Dmaj7-9"
     },
     {
-      "file": "library/mammoth_synth_chords__MSC_Synthos-E11.wav",
-      "name": "mammoth synth chords  MSC Synthos-E11"
-    },
-    {
       "file": "library/mammoth_synth_chords__MSC_Synthos-Fmin.wav",
       "name": "mammoth synth chords  MSC Synthos-Fmin"
     },
     {
       "file": "library/mammoth_synth_chords__MSC_Synthos-Gmaj7-9.wav",
       "name": "mammoth synth chords  MSC Synthos-Gmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_120_C_CEL.wav",
-      "name": "schumann app audio samples  CK2 120 C CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_120_C_EP.wav",
-      "name": "schumann app audio samples  CK2 120 C EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_120_C_ORG.wav",
-      "name": "schumann app audio samples  CK2 120 C ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Cm_CEL.wav",
-      "name": "schumann app audio samples  CK2 125 Cm CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Cm_EP.wav",
-      "name": "schumann app audio samples  CK2 125 Cm EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Cm_ORG.wav",
-      "name": "schumann app audio samples  CK2 125 Cm ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Gm_CEL.wav",
-      "name": "schumann app audio samples  CK2 125 Gm CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Gm_EP.wav",
-      "name": "schumann app audio samples  CK2 125 Gm EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_125_Gm_ORG.wav",
-      "name": "schumann app audio samples  CK2 125 Gm ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_A#_CEL.wav",
-      "name": "schumann app audio samples  CK2 130 A# CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_A#_EP.wav",
-      "name": "schumann app audio samples  CK2 130 A# EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_A#_ORG.wav",
-      "name": "schumann app audio samples  CK2 130 A# ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_C_CEL.wav",
-      "name": "schumann app audio samples  CK2 130 C CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_C_EP.wav",
-      "name": "schumann app audio samples  CK2 130 C EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_C_ORG.wav",
-      "name": "schumann app audio samples  CK2 130 C ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_Gm_CEL.wav",
-      "name": "schumann app audio samples  CK2 130 Gm CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_Gm_EP.wav",
-      "name": "schumann app audio samples  CK2 130 Gm EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_130_Gm_ORG.wav",
-      "name": "schumann app audio samples  CK2 130 Gm ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_C_CEL.wav",
-      "name": "schumann app audio samples  CK2 135 C CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_C_EP.wav",
-      "name": "schumann app audio samples  CK2 135 C EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_C_ORG.wav",
-      "name": "schumann app audio samples  CK2 135 C ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_Cm_CEL.wav",
-      "name": "schumann app audio samples  CK2 135 Cm CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_Cm_EP.wav",
-      "name": "schumann app audio samples  CK2 135 Cm EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_135_Cm_ORG.wav",
-      "name": "schumann app audio samples  CK2 135 Cm ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_C_CEL.wav",
-      "name": "schumann app audio samples  CK2 140 C CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_C_EP.wav",
-      "name": "schumann app audio samples  CK2 140 C EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_C_ORG.wav",
-      "name": "schumann app audio samples  CK2 140 C ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_G_CEL.wav",
-      "name": "schumann app audio samples  CK2 140 G CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_G_EP.wav",
-      "name": "schumann app audio samples  CK2 140 G EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_140_G_ORG.wav",
-      "name": "schumann app audio samples  CK2 140 G ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_145_Cm_CEL.wav",
-      "name": "schumann app audio samples  CK2 145 Cm CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_145_Cm_EP.wav",
-      "name": "schumann app audio samples  CK2 145 Cm EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_145_Cm_ORG.wav",
-      "name": "schumann app audio samples  CK2 145 Cm ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_150_E_CEL.wav",
-      "name": "schumann app audio samples  CK2 150 E CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_150_E_EP.wav",
-      "name": "schumann app audio samples  CK2 150 E EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_150_E_ORG.wav",
-      "name": "schumann app audio samples  CK2 150 E ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_155_C#_CEL.wav",
-      "name": "schumann app audio samples  CK2 155 C# CEL"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_155_C#_EP.wav",
-      "name": "schumann app audio samples  CK2 155 C# EP"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__CK2_155_C#_ORG.wav",
-      "name": "schumann app audio samples  CK2 155 C# ORG"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[120]-D.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[120]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[120]-F.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[120]-F"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[128]-C.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[128]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[128]-G.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[128]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[140]-A.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[140]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[140]-D.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[140]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[shrt]-A11.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[shrt]-A11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[shrt]-Bmin.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[shrt]-Bmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[shrt]-Cmaj7-9.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[shrt]-Cmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[shrt]-Dmin7.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[shrt]-Dmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[shrt]-Emin7-9.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[shrt]-Emin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[shrt]-Fmaj7.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[shrt]-Fmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[shrt]-Gmaj7-9.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[shrt]-Gmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[sus]-A11.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[sus]-A11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[sus]-Bmin.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[sus]-Bmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[sus]-Cmaj7-9.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[sus]-Cmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[sus]-Dmin7.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[sus]-Dmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[sus]-Emin7-9.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[sus]-Emin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[sus]-Fmaj7.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[sus]-Fmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_AnaSaurus[sus]-Gmaj7-9.wav",
-      "name": "schumann app audio samples  MSC AnaSaurus[sus]-Gmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[110]-A.wav",
-      "name": "schumann app audio samples  MSC CaeZars[110]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[110]-D.wav",
-      "name": "schumann app audio samples  MSC CaeZars[110]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[128]-C.wav",
-      "name": "schumann app audio samples  MSC CaeZars[128]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[128]-G.wav",
-      "name": "schumann app audio samples  MSC CaeZars[128]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[140]-E.wav",
-      "name": "schumann app audio samples  MSC CaeZars[140]-E"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[140]-G.wav",
-      "name": "schumann app audio samples  MSC CaeZars[140]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[shrt]-Amin.wav",
-      "name": "schumann app audio samples  MSC CaeZars[shrt]-Amin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[shrt]-Bmaj7-9.wav",
-      "name": "schumann app audio samples  MSC CaeZars[shrt]-Bmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[shrt]-Cmin7.wav",
-      "name": "schumann app audio samples  MSC CaeZars[shrt]-Cmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[shrt]-Dmin7-9.wav",
-      "name": "schumann app audio samples  MSC CaeZars[shrt]-Dmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[shrt]-Emaj7.wav",
-      "name": "schumann app audio samples  MSC CaeZars[shrt]-Emaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[shrt]-Fmaj7-9.wav",
-      "name": "schumann app audio samples  MSC CaeZars[shrt]-Fmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[shrt]-G11.wav",
-      "name": "schumann app audio samples  MSC CaeZars[shrt]-G11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[sus]-Amin.wav",
-      "name": "schumann app audio samples  MSC CaeZars[sus]-Amin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[sus]-Bmaj7-9.wav",
-      "name": "schumann app audio samples  MSC CaeZars[sus]-Bmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[sus]-Cmin7.wav",
-      "name": "schumann app audio samples  MSC CaeZars[sus]-Cmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[sus]-Dmin7-9.wav",
-      "name": "schumann app audio samples  MSC CaeZars[sus]-Dmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[sus]-Emaj7.wav",
-      "name": "schumann app audio samples  MSC CaeZars[sus]-Emaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[sus]-Fmaj7-9.wav",
-      "name": "schumann app audio samples  MSC CaeZars[sus]-Fmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CaeZars[sus]-G11.wav",
-      "name": "schumann app audio samples  MSC CaeZars[sus]-G11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble-Amin.wav",
-      "name": "schumann app audio samples  MSC CexDouble-Amin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble-Bmin7-9.wav",
-      "name": "schumann app audio samples  MSC CexDouble-Bmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble-Cmaj7.wav",
-      "name": "schumann app audio samples  MSC CexDouble-Cmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble-Dmin6.wav",
-      "name": "schumann app audio samples  MSC CexDouble-Dmin6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble-E11.wav",
-      "name": "schumann app audio samples  MSC CexDouble-E11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble-Fmaj7-9.wav",
-      "name": "schumann app audio samples  MSC CexDouble-Fmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble-Gmaj7-9.wav",
-      "name": "schumann app audio samples  MSC CexDouble-Gmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble[120]-A.wav",
-      "name": "schumann app audio samples  MSC CexDouble[120]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble[120]-E.wav",
-      "name": "schumann app audio samples  MSC CexDouble[120]-E"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble[134]-D.wav",
-      "name": "schumann app audio samples  MSC CexDouble[134]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble[134]-G.wav",
-      "name": "schumann app audio samples  MSC CexDouble[134]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble[170]-A.wav",
-      "name": "schumann app audio samples  MSC CexDouble[170]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_CexDouble[170]-E.wav",
-      "name": "schumann app audio samples  MSC CexDouble[170]-E"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_DuoArpo-Amin.wav",
-      "name": "schumann app audio samples  MSC DuoArpo-Amin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_DuoArpo-Bmaj7-9.wav",
-      "name": "schumann app audio samples  MSC DuoArpo-Bmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_DuoArpo-Cmin7.wav",
-      "name": "schumann app audio samples  MSC DuoArpo-Cmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_DuoArpo-Dmin7-9.wav",
-      "name": "schumann app audio samples  MSC DuoArpo-Dmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_DuoArpo-Emaj7.wav",
-      "name": "schumann app audio samples  MSC DuoArpo-Emaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_DuoArpo-Fmaj7-9.wav",
-      "name": "schumann app audio samples  MSC DuoArpo-Fmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_DuoArpo-G11.wav",
-      "name": "schumann app audio samples  MSC DuoArpo-G11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm-Amaj7.wav",
-      "name": "schumann app audio samples  MSC GrandEm-Amaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm-Bmin6.wav",
-      "name": "schumann app audio samples  MSC GrandEm-Bmin6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm-C11.wav",
-      "name": "schumann app audio samples  MSC GrandEm-C11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm-Dmin.wav",
-      "name": "schumann app audio samples  MSC GrandEm-Dmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm-Emaj7-9.wav",
-      "name": "schumann app audio samples  MSC GrandEm-Emaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm-Fmin7.wav",
-      "name": "schumann app audio samples  MSC GrandEm-Fmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm-Gmin7-9.wav",
-      "name": "schumann app audio samples  MSC GrandEm-Gmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm[120]-C.wav",
-      "name": "schumann app audio samples  MSC GrandEm[120]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm[120]-G.wav",
-      "name": "schumann app audio samples  MSC GrandEm[120]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm[128]-A.wav",
-      "name": "schumann app audio samples  MSC GrandEm[128]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm[128]-E.wav",
-      "name": "schumann app audio samples  MSC GrandEm[128]-E"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm[140]-C.wav",
-      "name": "schumann app audio samples  MSC GrandEm[140]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_GrandEm[140]-G.wav",
-      "name": "schumann app audio samples  MSC GrandEm[140]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul-Amin7-9-11.wav",
-      "name": "schumann app audio samples  MSC MallHaul-Amin7-9-11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul-Bmaj6.wav",
-      "name": "schumann app audio samples  MSC MallHaul-Bmaj6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul-Cmin7-9.wav",
-      "name": "schumann app audio samples  MSC MallHaul-Cmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul-Dmaj7.wav",
-      "name": "schumann app audio samples  MSC MallHaul-Dmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul-Emin6-11.wav",
-      "name": "schumann app audio samples  MSC MallHaul-Emin6-11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul-F11.wav",
-      "name": "schumann app audio samples  MSC MallHaul-F11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul-G7-9.wav",
-      "name": "schumann app audio samples  MSC MallHaul-G7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul[110]-A.wav",
-      "name": "schumann app audio samples  MSC MallHaul[110]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul[110]-D.wav",
-      "name": "schumann app audio samples  MSC MallHaul[110]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul[128]-C.wav",
-      "name": "schumann app audio samples  MSC MallHaul[128]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul[128]-G.wav",
-      "name": "schumann app audio samples  MSC MallHaul[128]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul[140]-A.wav",
-      "name": "schumann app audio samples  MSC MallHaul[140]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_MallHaul[140]-D.wav",
-      "name": "schumann app audio samples  MSC MallHaul[140]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[110]-C.wav",
-      "name": "schumann app audio samples  MSC Marsheen[110]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[110]-E.wav",
-      "name": "schumann app audio samples  MSC Marsheen[110]-E"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[128]-D.wav",
-      "name": "schumann app audio samples  MSC Marsheen[128]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[128]-F.wav",
-      "name": "schumann app audio samples  MSC Marsheen[128]-F"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[170]-C.wav",
-      "name": "schumann app audio samples  MSC Marsheen[170]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[170]-G.wav",
-      "name": "schumann app audio samples  MSC Marsheen[170]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[shrt]-Amin6.wav",
-      "name": "schumann app audio samples  MSC Marsheen[shrt]-Amin6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[shrt]-B11.wav",
-      "name": "schumann app audio samples  MSC Marsheen[shrt]-B11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[shrt]-Cmin.wav",
-      "name": "schumann app audio samples  MSC Marsheen[shrt]-Cmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[shrt]-Dmaj7-9.wav",
-      "name": "schumann app audio samples  MSC Marsheen[shrt]-Dmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[shrt]-Emin7.wav",
-      "name": "schumann app audio samples  MSC Marsheen[shrt]-Emin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[shrt]-Fmin7-9.wav",
-      "name": "schumann app audio samples  MSC Marsheen[shrt]-Fmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[shrt]-Gmaj7.wav",
-      "name": "schumann app audio samples  MSC Marsheen[shrt]-Gmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[sus]-Amin6.wav",
-      "name": "schumann app audio samples  MSC Marsheen[sus]-Amin6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[sus]-B11.wav",
-      "name": "schumann app audio samples  MSC Marsheen[sus]-B11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[sus]-Cmin.wav",
-      "name": "schumann app audio samples  MSC Marsheen[sus]-Cmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[sus]-Dmaj7-9.wav",
-      "name": "schumann app audio samples  MSC Marsheen[sus]-Dmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[sus]-Emin7.wav",
-      "name": "schumann app audio samples  MSC Marsheen[sus]-Emin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[sus]-Fmin7-9.wav",
-      "name": "schumann app audio samples  MSC Marsheen[sus]-Fmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Marsheen[sus]-Gmaj7.wav",
-      "name": "schumann app audio samples  MSC Marsheen[sus]-Gmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos-Amin7-9.wav",
-      "name": "schumann app audio samples  MSC Neos-Amin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos-Bmaj7.wav",
-      "name": "schumann app audio samples  MSC Neos-Bmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos-Cmin6.wav",
-      "name": "schumann app audio samples  MSC Neos-Cmin6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos-D11.wav",
-      "name": "schumann app audio samples  MSC Neos-D11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos-Emin.wav",
-      "name": "schumann app audio samples  MSC Neos-Emin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos-Fmaj7-9.wav",
-      "name": "schumann app audio samples  MSC Neos-Fmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos-Gmin7.wav",
-      "name": "schumann app audio samples  MSC Neos-Gmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos[110]-D.wav",
-      "name": "schumann app audio samples  MSC Neos[110]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos[110]-G.wav",
-      "name": "schumann app audio samples  MSC Neos[110]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos[134]-A.wav",
-      "name": "schumann app audio samples  MSC Neos[134]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos[134]-D.wav",
-      "name": "schumann app audio samples  MSC Neos[134]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos[170]-D.wav",
-      "name": "schumann app audio samples  MSC Neos[170]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Neos[170]-G.wav",
-      "name": "schumann app audio samples  MSC Neos[170]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[120]-A.wav",
-      "name": "schumann app audio samples  MSC Phetta[120]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[120]-D.wav",
-      "name": "schumann app audio samples  MSC Phetta[120]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[134]-C.wav",
-      "name": "schumann app audio samples  MSC Phetta[134]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[134]-F.wav",
-      "name": "schumann app audio samples  MSC Phetta[134]-F"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[140]-B.wav",
-      "name": "schumann app audio samples  MSC Phetta[140]-B"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[140]-E.wav",
-      "name": "schumann app audio samples  MSC Phetta[140]-E"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[shrt]-Amaj7.wav",
-      "name": "schumann app audio samples  MSC Phetta[shrt]-Amaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[shrt]-Bmin6.wav",
-      "name": "schumann app audio samples  MSC Phetta[shrt]-Bmin6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[shrt]-C11.wav",
-      "name": "schumann app audio samples  MSC Phetta[shrt]-C11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[shrt]-Dmin.wav",
-      "name": "schumann app audio samples  MSC Phetta[shrt]-Dmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[shrt]-Emaj7-9.wav",
-      "name": "schumann app audio samples  MSC Phetta[shrt]-Emaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[shrt]-Fmin7.wav",
-      "name": "schumann app audio samples  MSC Phetta[shrt]-Fmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[shrt]-Gmin7-9.wav",
-      "name": "schumann app audio samples  MSC Phetta[shrt]-Gmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[sus]-Amaj7.wav",
-      "name": "schumann app audio samples  MSC Phetta[sus]-Amaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[sus]-Bmin6.wav",
-      "name": "schumann app audio samples  MSC Phetta[sus]-Bmin6"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[sus]-C11.wav",
-      "name": "schumann app audio samples  MSC Phetta[sus]-C11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[sus]-Dmin.wav",
-      "name": "schumann app audio samples  MSC Phetta[sus]-Dmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[sus]-Emaj7-9.wav",
-      "name": "schumann app audio samples  MSC Phetta[sus]-Emaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[sus]-Fmin7.wav",
-      "name": "schumann app audio samples  MSC Phetta[sus]-Fmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Phetta[sus]-Gmin7-9.wav",
-      "name": "schumann app audio samples  MSC Phetta[sus]-Gmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_QuadMello-Amin7.wav",
-      "name": "schumann app audio samples  MSC QuadMello-Amin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_QuadMello-Bmaj7.wav",
-      "name": "schumann app audio samples  MSC QuadMello-Bmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_QuadMello-Cmaj7-9.wav",
-      "name": "schumann app audio samples  MSC QuadMello-Cmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_QuadMello-D11.wav",
-      "name": "schumann app audio samples  MSC QuadMello-D11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_QuadMello-Emin.wav",
-      "name": "schumann app audio samples  MSC QuadMello-Emin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_QuadMello-Fmaj7-9.wav",
-      "name": "schumann app audio samples  MSC QuadMello-Fmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_QuadMello-Gmin7.wav",
-      "name": "schumann app audio samples  MSC QuadMello-Gmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[110]-C.wav",
-      "name": "schumann app audio samples  MSC Semafour[110]-C"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[110]-G.wav",
-      "name": "schumann app audio samples  MSC Semafour[110]-G"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[134]-B.wav",
-      "name": "schumann app audio samples  MSC Semafour[134]-B"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[134]-E.wav",
-      "name": "schumann app audio samples  MSC Semafour[134]-E"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[170]-A.wav",
-      "name": "schumann app audio samples  MSC Semafour[170]-A"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[170]-D.wav",
-      "name": "schumann app audio samples  MSC Semafour[170]-D"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[shrt]-Amaj7-9.wav",
-      "name": "schumann app audio samples  MSC Semafour[shrt]-Amaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[shrt]-B11.wav",
-      "name": "schumann app audio samples  MSC Semafour[shrt]-B11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[shrt]-Cmin.wav",
-      "name": "schumann app audio samples  MSC Semafour[shrt]-Cmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[shrt]-Dmaj7-9.wav",
-      "name": "schumann app audio samples  MSC Semafour[shrt]-Dmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[shrt]-Emin7.wav",
-      "name": "schumann app audio samples  MSC Semafour[shrt]-Emin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[shrt]-Fmin7-9.wav",
-      "name": "schumann app audio samples  MSC Semafour[shrt]-Fmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[shrt]-Gmaj7.wav",
-      "name": "schumann app audio samples  MSC Semafour[shrt]-Gmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[sus]-Amaj7-9.wav",
-      "name": "schumann app audio samples  MSC Semafour[sus]-Amaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[sus]-B11.wav",
-      "name": "schumann app audio samples  MSC Semafour[sus]-B11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[sus]-Cmin.wav",
-      "name": "schumann app audio samples  MSC Semafour[sus]-Cmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[sus]-Dmaj7-9.wav",
-      "name": "schumann app audio samples  MSC Semafour[sus]-Dmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[sus]-Emin7.wav",
-      "name": "schumann app audio samples  MSC Semafour[sus]-Emin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[sus]-Fmin7-9.wav",
-      "name": "schumann app audio samples  MSC Semafour[sus]-Fmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Semafour[sus]-Gmaj7.wav",
-      "name": "schumann app audio samples  MSC Semafour[sus]-Gmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Slinas-Amaj7-9.wav",
-      "name": "schumann app audio samples  MSC Slinas-Amaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Slinas-Bmin7.wav",
-      "name": "schumann app audio samples  MSC Slinas-Bmin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Slinas-Cmin7-9.wav",
-      "name": "schumann app audio samples  MSC Slinas-Cmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Slinas-Dmaj7.wav",
-      "name": "schumann app audio samples  MSC Slinas-Dmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Slinas-Emaj7-9.wav",
-      "name": "schumann app audio samples  MSC Slinas-Emaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Slinas-F11.wav",
-      "name": "schumann app audio samples  MSC Slinas-F11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Slinas-Gmin.wav",
-      "name": "schumann app audio samples  MSC Slinas-Gmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Synthos-Amin7.wav",
-      "name": "schumann app audio samples  MSC Synthos-Amin7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Synthos-Bmin7-9.wav",
-      "name": "schumann app audio samples  MSC Synthos-Bmin7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Synthos-Cmaj7.wav",
-      "name": "schumann app audio samples  MSC Synthos-Cmaj7"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Synthos-Dmaj7-9.wav",
-      "name": "schumann app audio samples  MSC Synthos-Dmaj7-9"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Synthos-E11.wav",
-      "name": "schumann app audio samples  MSC Synthos-E11"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Synthos-Fmin.wav",
-      "name": "schumann app audio samples  MSC Synthos-Fmin"
-    },
-    {
-      "file": "library/schumann_app_audio_samples__MSC_Synthos-Gmaj7-9.wav",
-      "name": "schumann app audio samples  MSC Synthos-Gmaj7-9"
     }
   ],
-  "guitar": []
+  "guitar": [
+    {
+      "file": "library/gtr_dumble_ambient_72_Fmaj7_cycle06.wav",
+      "name": "gtr dumble ambient 72 Fmaj7 cycle06"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_74_Dm9_cycle04.wav",
+      "name": "gtr dumble ambient 74 Dm9 cycle04"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_76_Csus2_cycle08.wav",
+      "name": "gtr dumble ambient 76 Csus2 cycle08"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_78_Cmaj7_cycle01.wav",
+      "name": "gtr dumble ambient 78 Cmaj7 cycle01"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_80_Amadd9_cycle02.wav",
+      "name": "gtr dumble ambient 80 Amadd9 cycle02"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_80_Emin9_cycle11.wav",
+      "name": "gtr dumble ambient 80 Emin9 cycle11"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_82_G6_cycle03.wav",
+      "name": "gtr dumble ambient 82 G6 cycle03"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_84_Gsus2_cycle07.wav",
+      "name": "gtr dumble ambient 84 Gsus2 cycle07"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_86_Dadd9_cycle10.wav",
+      "name": "gtr dumble ambient 86 Dadd9 cycle10"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_88_Em7_cycle05.wav",
+      "name": "gtr dumble ambient 88 Em7 cycle05"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_90_Amin7_cycle09.wav",
+      "name": "gtr dumble ambient 90 Amin7 cycle09"
+    },
+    {
+      "file": "library/gtr_dumble_ambient_92_Cmaj9_cycle12.wav",
+      "name": "gtr dumble ambient 92 Cmaj9 cycle12"
+    }
+  ]
 }

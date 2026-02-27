@@ -49,11 +49,16 @@
 //  - Added haptic feedback and audio chime when marking strongest phase.
 //  - Updated build and cache versions to v2.0.4.
 console.log("app.js loaded");
+const APP_VERSION = 'v2.6.1-dev';
+const PHASE_TARGET_DEGREES = 18; // 5% of a full 360° cycle.
 // ---- Core audio state ----
 let audioCtx = null;
 let baseOsc = null;
 let baseGain = null;
 let masterGain = null;
+let toneBusInput = null;
+let phaseDelayNode = null;
+let activeBandHz = 7.83;
 // Noise sources for ocean, rain and waves
 let noiseBuffer = null;
 let oceanSource = null;
@@ -151,6 +156,7 @@ const irBuffers = {};
 let chordOscs = [];
 let chordTimer = null;
 let chordIndex = 0;
+let phasePreviewTimeoutId = null;
 
 /**
  * Start the chord progression based on the current audible frequency and
@@ -266,19 +272,31 @@ function stopChordBuffer() {
 }
 
 /**
- * Load a chord manifest from assets/chords/manifest.json.  The manifest maps
- * instrument names to arrays of loop descriptors.  Called once on
- * initialisation.  Errors are silently ignored; manifest remains null if
- * the file cannot be loaded.
+ * Load a chord manifest. On mobile we prefer a curated lightweight manifest
+ * to reduce memory/IO pressure, then fall back to the full manifest.
+ * Called once on initialisation. Errors are silently ignored.
  */
 async function loadChordManifest() {
-  try {
-    const response = await fetch('assets/chords/manifest.json', { cache: 'no-cache' });
-    if (!response.ok) throw new Error('Failed to fetch manifest');
-    const json = await response.json();
-    chordManifest = json || null;
-  } catch (e) {
-    chordManifest = null;
+  const ua = (typeof navigator !== 'undefined' && navigator.userAgent ? navigator.userAgent : '').toLowerCase();
+  const isMobile = /iphone|ipad|ipod|android|mobile/.test(ua);
+  const candidates = isMobile
+    ? ['assets/chords/manifest.mobile.json', 'assets/chords/manifest.json']
+    : ['assets/chords/manifest.json'];
+
+  chordManifest = null;
+  for (const path of candidates) {
+    try {
+      const response = await fetch(path, { cache: 'no-cache' });
+      if (!response.ok) continue;
+      const json = await response.json();
+      chordManifest = json || null;
+      if (chordManifest) {
+        console.info(`[Chords] loaded manifest: ${path}`);
+        break;
+      }
+    } catch (e) {
+      // Continue to next candidate.
+    }
   }
 }
 
@@ -361,6 +379,7 @@ function sortChordLoops(loops) {
 function getLoopCategory(entry) {
   const file = String((entry && entry.file) || '').toLowerCase();
   if (file.includes('user_reference__')) return 'Reference / Favorites';
+  if (file.includes('gtr_dumble_') || file.includes('gtr_')) return 'Meditation Guitar Library';
   if (file.includes('mammoth_synth_chords__')) return 'Mammoth Synth Chords';
   if (file.includes('schumann_app_audio_samples__')) return 'Schumann App Audio Samples';
   if (file.includes('ck2_')) return 'Cool Keys';
@@ -545,7 +564,7 @@ function updateChordLoopUI() {
 
   // Remaining loops grouped by source/category.
   const topSet = new Set(topRecommended.map(({ loop }) => loop.file));
-  const groupOrder = ['Reference / Favorites', 'Mammoth Synth Chords', 'Schumann App Audio Samples', 'Cool Keys', 'Other'];
+  const groupOrder = ['Reference / Favorites', 'Meditation Guitar Library', 'Mammoth Synth Chords', 'Schumann App Audio Samples', 'Cool Keys', 'Other'];
   const grouped = new Map(groupOrder.map((name) => [name, []]));
   rankedLoops.forEach(({ loop }) => {
     if (topSet.has(loop.file)) return;
@@ -635,8 +654,17 @@ let scanCounts = [];
 let scanIndex = 0;
 let scanTimeoutId = null;
 
+// ---- Guided A/B phase finder state ----
+let phaseABActive = false;
+let phaseABLow = 0;
+let phaseABHigh = 360;
+let phaseABRound = 0;
+let phaseACandidate = 0;
+let phaseBCandidate = 0;
+
 // ---- UI helper ----
 const $ = (id) => document.getElementById(id);
+const appVersionBadge = $('appVersionBadge');
 
 // Tabs / views
 const tabs  = Array.from(document.querySelectorAll('.tab'));
@@ -668,6 +696,13 @@ const markStrongest   = $('markStrongest');
 const bestPhaseDisplay= $('bestPhaseDisplay');
 const clearBestPhase  = $('clearBestPhase');
 const medPhaseLabel   = $('medPhaseLabel');
+const phaseABStart    = $('phaseABStart');
+const phaseABPanel    = $('phaseABPanel');
+const phaseABPrompt   = $('phaseABPrompt');
+const phaseChooseA    = $('phaseChooseA');
+const phaseChooseB    = $('phaseChooseB');
+const phaseChooseSame = $('phaseChooseSame');
+const phaseReplay     = $('phaseReplay');
 
 // Scan progress & summary elements
 const scanProgress   = $('scanProgress');
@@ -1180,7 +1215,10 @@ function mapBandToAudible(freqHz) {
 }
 
 function getCurrentBandHz() {
-  const val = freqSelect ? parseFloat(freqSelect.value) : 7.83;
+  if (baseOsc && Number.isFinite(activeBandHz) && activeBandHz > 0) {
+    return activeBandHz;
+  }
+  const val = freqSelect ? parseFloat(freqSelect.value) : activeBandHz;
   return Number.isFinite(val) ? val : 7.83;
 }
 
@@ -1188,6 +1226,24 @@ function getToneMix() {
   const val = toneMixRange ? parseFloat(toneMixRange.value) : 1;
   if (!Number.isFinite(val)) return 1;
   return Math.max(0, Math.min(1, val));
+}
+
+function normalizePhaseDeg(value) {
+  const v = Number(value) || 0;
+  return ((v % 360) + 360) % 360;
+}
+
+function phaseDegToDelaySec(freqHz, phaseDeg) {
+  if (!Number.isFinite(freqHz) || freqHz <= 0) return 0;
+  const normalized = normalizePhaseDeg(phaseDeg);
+  return (normalized / 360) * (1 / freqHz);
+}
+
+function applyPhaseDelayNow() {
+  if (!phaseDelayNode || !audioCtx || !phaseRange) return;
+  const deg = parseFloat(phaseRange.value) || 0;
+  const sec = phaseDegToDelaySec(getCurrentBandHz(), deg);
+  phaseDelayNode.delayTime.setValueAtTime(sec, audioCtx.currentTime);
 }
 
 // ---- Soundscape patterns ----
@@ -1449,6 +1505,8 @@ function stopCurrentAudio() {
   baseOsc = null;
   baseGain = null;
   masterGain = null;
+  toneBusInput = null;
+  phaseDelayNode = null;
   oceanSource = null;
   oceanGain = null;
   rainSource = null;
@@ -1463,7 +1521,7 @@ function stopCurrentAudio() {
  * the original carrier and can be set to a subtle level for reduced fatigue.
  */
 function createBandSplitEchoCluster(audibleHz, freqHz, depthVal, options = {}) {
-  if (!audioCtx || !masterGain || !baseGain || !baseOsc) return;
+  if (!audioCtx || !toneBusInput || !baseGain || !baseOsc) return;
   const {
     centerGainScale = 0.21,  // ~ -9 dB vs the default 0.6 gain path
     echoGainScale = 0.26,
@@ -1503,8 +1561,8 @@ function createBandSplitEchoCluster(audibleHz, freqHz, depthVal, options = {}) {
   leftPan.pan.value = -1;
   rightPan.pan.value = 1;
 
-  leftEchoOsc.connect(leftDelay).connect(leftGain).connect(leftPan).connect(masterGain);
-  rightEchoOsc.connect(rightDelay).connect(rightGain).connect(rightPan).connect(masterGain);
+  leftEchoOsc.connect(leftDelay).connect(leftGain).connect(leftPan).connect(toneBusInput);
+  rightEchoOsc.connect(rightDelay).connect(rightGain).connect(rightPan).connect(toneBusInput);
   leftEchoOsc.start();
   rightEchoOsc.start();
 
@@ -1526,6 +1584,7 @@ function startGraph(freqHz) {
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
+  activeBandHz = Number.isFinite(freqHz) && freqHz > 0 ? freqHz : 7.83;
   const audibleHz = mapBandToAudible(freqHz);
   // Create master and analyser
   masterGain = audioCtx.createGain();
@@ -1536,6 +1595,18 @@ function startGraph(freqHz) {
   scopeData = new Uint8Array(analyser.fftSize);
   masterGain.connect(analyser);
   analyser.connect(audioCtx.destination);
+
+  // Tone bus: apply a real right-channel phase delay to tonal stimulation.
+  toneBusInput = audioCtx.createGain();
+  const toneSplitter = audioCtx.createChannelSplitter(2);
+  const toneMerger = audioCtx.createChannelMerger(2);
+  phaseDelayNode = audioCtx.createDelay(0.5);
+  toneBusInput.connect(toneSplitter);
+  toneSplitter.connect(toneMerger, 0, 0);
+  toneSplitter.connect(phaseDelayNode, 1);
+  phaseDelayNode.connect(toneMerger, 0, 1);
+  toneMerger.connect(masterGain);
+  extraNodes.push(toneBusInput, toneSplitter, toneMerger, phaseDelayNode);
 
   // If a reverb space is selected, set up a convolver in parallel with the dry path.
   // Because this taps the master bus, ALL sources routed to masterGain (tone,
@@ -1602,7 +1673,7 @@ function startGraph(freqHz) {
   // Set a default gain which may be modified below
   baseGain.gain.value = depthVal * 0.6 * toneMix;
   baseOsc.connect(baseGain);
-  baseGain.connect(masterGain);
+  baseGain.connect(toneBusInput);
   // Create stimulation according to mode
   if (stimulationMode === 'am') {
     // Isochronic: amplitude modulation.  We create a low‑frequency
@@ -1646,8 +1717,8 @@ function startGraph(freqHz) {
     const rightPan = audioCtx.createStereoPanner();
     leftPan.pan.value  = -1;
     rightPan.pan.value = 1;
-    leftOsc.connect(leftGain).connect(leftPan).connect(masterGain);
-    rightOsc.connect(rightGain).connect(rightPan).connect(masterGain);
+    leftOsc.connect(leftGain).connect(leftPan).connect(toneBusInput);
+    rightOsc.connect(rightGain).connect(rightPan).connect(toneBusInput);
     leftOsc.start();
     rightOsc.start();
     extraNodes.push(leftOsc, rightOsc, leftGain, rightGain, leftPan, rightPan);
@@ -1666,6 +1737,7 @@ function startGraph(freqHz) {
       toneMix
     });
   }
+  applyPhaseDelayNow();
   // Noise buffer (used when no high‑quality sample is available)
   const buffer = createNoiseBuffer(audioCtx);
   // Begin loading the high‑quality ocean sample asynchronously (if available). We
@@ -1863,10 +1935,12 @@ extraNodes.push(wavesPan);
 // ---- Phase and session helpers ----
 function updatePhaseLabel() {
   if (!phaseRange || !phaseLabel) return;
-  const phase = parseFloat(phaseRange.value) || 0;
+  const phase = normalizePhaseDeg(parseFloat(phaseRange.value) || 0);
+  phaseRange.value = phase.toFixed(0);
   const freq  = getCurrentBandHz();
-  const ms    = freq > 0 ? (phase / 360) * (1000 / freq) : 0;
+  const ms    = freq > 0 ? phaseDegToDelaySec(freq, phase) * 1000 : 0;
   phaseLabel.textContent = `${phase.toFixed(0)}° / ${ms.toFixed(0)} ms`;
+  applyPhaseDelayNow();
   // Keep breathing sync aligned
   updateBreathAnimation();
 }
@@ -2032,6 +2106,160 @@ function toggleAutosweep() {
   } else {
     startAutosweep();
   }
+}
+
+function setPhaseABButtonsEnabled(enabled) {
+  if (phaseChooseA) phaseChooseA.disabled = !enabled;
+  if (phaseChooseB) phaseChooseB.disabled = !enabled;
+  if (phaseChooseSame) phaseChooseSame.disabled = !enabled;
+  if (phaseReplay) phaseReplay.disabled = !enabled;
+}
+
+function setPhaseABPrompt(text) {
+  if (!phaseABPrompt) return;
+  phaseABPrompt.textContent = text;
+}
+
+function setLivePhase(deg) {
+  if (!phaseRange) return;
+  phaseRange.value = normalizePhaseDeg(deg).toFixed(0);
+  updatePhaseLabel();
+}
+
+function clearPhasePreviewTimer() {
+  if (!phasePreviewTimeoutId) return;
+  clearTimeout(phasePreviewTimeoutId);
+  phasePreviewTimeoutId = null;
+}
+
+function preparePhaseABRound() {
+  const span = Math.max(0, phaseABHigh - phaseABLow);
+  if (span <= 0) {
+    phaseACandidate = phaseABLow;
+    phaseBCandidate = phaseABHigh;
+    return;
+  }
+  phaseACandidate = phaseABLow + span / 3;
+  phaseBCandidate = phaseABLow + (2 * span) / 3;
+}
+
+function runPhaseABPreview() {
+  if (!phaseABActive) return;
+  setPhaseABButtonsEnabled(false);
+  const a = normalizePhaseDeg(phaseACandidate);
+  const b = normalizePhaseDeg(phaseBCandidate);
+  setPhaseABPrompt(`Round ${phaseABRound}: listening A (${a.toFixed(0)}°) then B (${b.toFixed(0)}°)...`);
+
+  const listenMs = 2600;
+  const gapMs = 350;
+  setLivePhase(a);
+  clearPhasePreviewTimer();
+  phasePreviewTimeoutId = setTimeout(() => {
+    setLivePhase(b);
+    phasePreviewTimeoutId = setTimeout(() => {
+      setPhaseABButtonsEnabled(true);
+      setPhaseABPrompt(`Round ${phaseABRound}: choose A (${a.toFixed(0)}°), B (${b.toFixed(0)}°), or no difference.`);
+      phasePreviewTimeoutId = null;
+    }, listenMs + gapMs);
+  }, listenMs + gapMs);
+}
+
+function finalizePhaseABTest() {
+  const best = normalizePhaseDeg((phaseABLow + phaseABHigh) / 2);
+  setLivePhase(best);
+  const key = getExploreBandKey();
+  const current = bestPhaseByBand[key];
+  if (!current) {
+    bestPhaseByBand[key] = { phase: best, count: 1 };
+  } else {
+    const count = current.count + 1;
+    const avg = current.phase + (best - current.phase) / count;
+    bestPhaseByBand[key] = { phase: avg, count };
+  }
+  savePhaseHistory();
+  updateBestPhaseDisplay();
+  updateMedPhaseLabel();
+  renderPhaseHistory();
+
+  phaseABActive = false;
+  clearPhasePreviewTimer();
+  if (phaseABStart) phaseABStart.textContent = 'Start Phase A/B Finder';
+  if (phaseRange) phaseRange.disabled = false;
+  if (sweepToggle) sweepToggle.disabled = false;
+  if (markStrongest) markStrongest.disabled = false;
+  setPhaseABButtonsEnabled(false);
+  if (phaseABPanel) phaseABPanel.hidden = true;
+  if (scanSummary) {
+    scanSummary.innerHTML = `A/B complete. Best phase saved near <strong>${best.toFixed(0)}°</strong> (window ${Math.max(0, phaseABHigh - phaseABLow).toFixed(1)}°).`;
+    scanSummary.hidden = false;
+  }
+}
+
+function stopPhaseABTest(clearSummary = false) {
+  if (!phaseABActive) {
+    if (phaseABPanel) phaseABPanel.hidden = true;
+    if (markStrongest) markStrongest.disabled = false;
+    setPhaseABButtonsEnabled(false);
+    return;
+  }
+  phaseABActive = false;
+  clearPhasePreviewTimer();
+  if (phaseABStart) phaseABStart.textContent = 'Start Phase A/B Finder';
+  if (phaseRange) phaseRange.disabled = false;
+  if (sweepToggle) sweepToggle.disabled = false;
+  if (markStrongest) markStrongest.disabled = false;
+  setPhaseABButtonsEnabled(false);
+  if (phaseABPanel) phaseABPanel.hidden = true;
+  if (clearSummary && scanSummary) {
+    scanSummary.hidden = true;
+    scanSummary.innerHTML = '';
+  }
+}
+
+function startPhaseABTest() {
+  if (phaseABActive) return;
+  stopAutosweep();
+  startExplore();
+
+  phaseABActive = true;
+  phaseABLow = 0;
+  phaseABHigh = 360;
+  phaseABRound = 1;
+  preparePhaseABRound();
+
+  if (phaseABStart) phaseABStart.textContent = 'Stop Phase A/B Finder';
+  if (phaseRange) phaseRange.disabled = true;
+  if (sweepToggle) sweepToggle.disabled = true;
+  if (markStrongest) markStrongest.disabled = true;
+  if (phaseABPanel) phaseABPanel.hidden = false;
+  if (scanSummary) {
+    scanSummary.hidden = true;
+    scanSummary.innerHTML = '';
+  }
+  runPhaseABPreview();
+}
+
+function handlePhaseABVote(choice) {
+  if (!phaseABActive) return;
+  const mid = (phaseACandidate + phaseBCandidate) / 2;
+  if (choice === 'a') {
+    phaseABHigh = mid;
+  } else if (choice === 'b') {
+    phaseABLow = mid;
+  } else {
+    const center = mid;
+    const halfWindow = Math.max(PHASE_TARGET_DEGREES / 2, (phaseABHigh - phaseABLow) / 4);
+    phaseABLow = Math.max(0, center - halfWindow);
+    phaseABHigh = Math.min(360, center + halfWindow);
+  }
+
+  if ((phaseABHigh - phaseABLow) <= PHASE_TARGET_DEGREES) {
+    finalizePhaseABTest();
+    return;
+  }
+  phaseABRound += 1;
+  preparePhaseABRound();
+  runPhaseABPreview();
 }
 
 // ---- Two-tier phase exploration & fine tune ----
@@ -2296,6 +2524,7 @@ function startExplore() {
 function stopExplore() {
   stopCurrentAudio();
   stopAutosweep();
+  stopPhaseABTest(true);
   // If a guided scan is running, abort it and reset the UI
   if (scanning) {
     scanning = false;
@@ -2322,6 +2551,7 @@ function stopExplore() {
 }
 
 function startMeditation() {
+  stopPhaseABTest(true);
   const bandHz = parseFloat(medFreqSelect ? medFreqSelect.value : '7.83') || 7.83;
   startGraph(bandHz);
   // Use best phase if available
@@ -2341,6 +2571,7 @@ function startMeditation() {
 function stopMeditation(fromTimer) {
   stopCurrentAudio();
   stopAutosweep();
+  stopPhaseABTest(true);
   clearMedTimer();
   if (medPlay) medPlay.disabled = false;
   if (medStop) medStop.disabled = true;
@@ -2363,8 +2594,7 @@ tabs.forEach((tab) => {
 
 // Explore controls
 if (explorePlay) explorePlay.addEventListener('click', () => {
-  // Begin guided two‑tier phase exploration instead of a simple start.
-  startTwoTierScan();
+  startExplore();
 });
 if (exploreStop) exploreStop.addEventListener('click', stopExplore);
 
@@ -2448,6 +2678,17 @@ if (markStrongest) markStrongest.addEventListener('click', handleMarkStrongest);
 if (clearBestPhase) clearBestPhase.addEventListener('click', () => {
   clearBestPhaseForBand(getExploreBandKey());
 });
+if (phaseABStart) phaseABStart.addEventListener('click', () => {
+  if (phaseABActive) {
+    stopPhaseABTest(false);
+  } else {
+    startPhaseABTest();
+  }
+});
+if (phaseChooseA) phaseChooseA.addEventListener('click', () => handlePhaseABVote('a'));
+if (phaseChooseB) phaseChooseB.addEventListener('click', () => handlePhaseABVote('b'));
+if (phaseChooseSame) phaseChooseSame.addEventListener('click', () => handlePhaseABVote('same'));
+if (phaseReplay) phaseReplay.addEventListener('click', runPhaseABPreview);
 
 // Carrier/depth/volume sliders
 if (carrierRange) carrierRange.addEventListener('input', updateCarrierLabel);
@@ -2538,15 +2779,34 @@ if (sessionMinutes) sessionMinutes.addEventListener('input', updateSessionLabel)
 
 // Frequency selectors
 if (freqSelect) freqSelect.addEventListener('change', () => {
+  stopPhaseABTest(true);
   updatePhaseLabel();
   updateBreathAnimation();
   updateBestPhaseDisplay();
+  const exploreRunning = !!(explorePlay && explorePlay.disabled);
+  const medRunning = !!(medPlay && medPlay.disabled);
+  if (exploreRunning && !medRunning) {
+    const bandHz = parseFloat(freqSelect.value) || 7.83;
+    startGraph(bandHz);
+  }
 });
 if (medFreqSelect) medFreqSelect.addEventListener('change', () => {
   updateMedPhaseLabel();
+  const medRunning = !!(medPlay && medPlay.disabled);
+  if (medRunning) {
+    const bandHz = parseFloat(medFreqSelect.value) || 7.83;
+    startGraph(bandHz);
+    const key = getMedBandKey();
+    const info = bestPhaseByBand[key];
+    if (info && phaseRange) {
+      phaseRange.value = info.phase.toFixed(0);
+      updatePhaseLabel();
+    }
+  }
 });
 
 // Initial UI state setup
+if (appVersionBadge) appVersionBadge.textContent = APP_VERSION;
 updatePhaseLabel();
 updateSweepLabel();
 updateCarrierLabel();
@@ -2558,6 +2818,8 @@ updateSoundscapeLabels();
 updateBreathAnimation();
 updateBestPhaseDisplay();
 updateMedPhaseLabel();
+setPhaseABButtonsEnabled(false);
+if (phaseABPanel) phaseABPanel.hidden = true;
 
 // Ensure AudioContext exists and begin loading high-quality soundscape samples at startup.
 ensureAudio();

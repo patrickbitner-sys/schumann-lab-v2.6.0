@@ -4,8 +4,10 @@ Browser-first Schumann resonance meditation lab with:
 - Schumann-band stimulation modes (AM, Binaural, Spatial Echo, Ambient Echo)
 - Soundscape mixing (ocean, rain, birds, waves)
 - Chord layers with recommendation ranking and user preferences
+- Mobile-aware chord manifests (`manifest.mobile.json` fallback on iOS/Android)
+- Built-in meditation guitar loop library (`gtr_dumble_ambient_*`)
 - Forest/Temple convolution reverb
-- Guided phase scan, autosweep, meditation timer, and journal/history persistence
+- Guided phase A/B finder (to 18° resolution), autosweep, meditation timer, and journal/history persistence
 
 ## Baseline
 - Current baseline: `v2.6.0`
@@ -35,6 +37,9 @@ Note: Open via HTTP, not `file://`.
 - Integration guide: `CHORD_IR_INTEGRATION.md`
 - Install IR helper: `tools/install_ir_files.py`
 - Rebuild chord manifest: `tools/rebuild_chord_manifest.py`
+- Generate synthetic meditation guitar loops: `tools/generate_guitar_meditation_loops.py`
+- Chord curation notes: `docs/CHORD_LIBRARY_CURATION_v2.6.1.md`
+- Guitar loop sourcing notes: `docs/GUITAR_LOOP_SOURCING_v2.6.1.md`
 
 ## iOS Setup
 - iOS setup guide (Worldwide Web + Safari): `PWA_SETUP_IOS.md`

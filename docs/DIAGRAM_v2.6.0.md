@@ -8,8 +8,10 @@ flowchart TD
   JS --> CTRL[UI Controls]
   JS --> ENG[Audio Engine]
   JS --> PERSIST[LocalStorage]
+  CTRL --> PHASECTL[Phase Controls\nSlider / Autosweep / A/B Finder]
 
   ENG --> MODE[Stimulation Modes\nAM / Binaural / Spatial Echo / Ambient Echo]
+  ENG --> PBUS[Tone Phase Bus\nR delay derived from phase slider]
   ENG --> SCAPE[Soundscapes\nOcean / Rain / Birds / Waves]
   ENG --> CHORD[Chord Layer\nSynth + Loop]
   ENG --> MIX[Master Mix Bus]
@@ -22,10 +24,12 @@ flowchart TD
   SPAT --> DF[Echo pitch split rule:\nleft offset + right offset = selected band]
 
   CHORD --> MAN[assets/chords/manifest.json]
+  CHORD --> MANM[assets/chords/manifest.mobile.json]
   CHORD --> PREF[assets/chords/preferences.json]
   CHORD --> LIB[assets/chords/library/*]
 
-  MODE --> MIX
+  MODE --> PBUS
+  PBUS --> MIX
   SCAPE --> MIX
   CHORD --> MIX
   MIX --> DRY[Dry Path -> analyser -> destination]

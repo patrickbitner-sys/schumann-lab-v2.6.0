@@ -21,7 +21,7 @@
 4. Soundscape Resolution and Fallback
 5. Chord Loop Manifest/Cache + Recommendation Ranking
 6. IR Convolution Stage
-7. Phase Scan + Autosweep
+7. Phase Delay + A/B Finder + Autosweep
 8. Journal/History Persistence
 
 ## Data Contracts

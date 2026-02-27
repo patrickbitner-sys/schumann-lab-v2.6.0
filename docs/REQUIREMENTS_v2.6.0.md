@@ -11,7 +11,7 @@ Schumann Lab provides a browser-first meditation audio environment centered on S
 5. Chord layer supports synthesized playback and loop-based playback from `assets/chords/manifest.json`.
 6. Chord loop recommendations prioritize meditation suitability and user preference profile.
 7. Reverb supports `Forest` and `Temple` impulse responses from `assets/ir/*.wav`.
-8. Phase tools include slider, autosweep, strongest-phase marking, and two-tier scan workflow.
+8. Phase tools include slider, autosweep, strongest-phase marking, and A/B comparison workflow that converges to ~18° granularity.
 9. Meditate mode supports session timer and best-phase reuse.
 10. Journal supports save, render, export, and clear actions.
 11. Local persistence uses localStorage for journal entries and phase history.
@@ -27,5 +27,5 @@ Schumann Lab provides a browser-first meditation audio environment centered on S
 1. IR files:
    - `assets/ir/forest.wav`
    - `assets/ir/temple.wav`
-2. Chord loops under `assets/chords/library/` with generated `assets/chords/manifest.json`.
+2. Chord loops under `assets/chords/library/` with generated `assets/chords/manifest.json` and optional `assets/chords/manifest.mobile.json`.
 3. Optional recommendation profile at `assets/chords/preferences.json`.
