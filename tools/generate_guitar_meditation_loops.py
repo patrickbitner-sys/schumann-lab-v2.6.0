@@ -98,16 +98,16 @@ def add_pluck(
     delay = max(2, int(SAMPLE_RATE / max(40.0, freq)))
     ring = [(rng.random() * 2.0 - 1.0) * 0.58 for _ in range(delay)]
     idx = 0
-    decay = 0.9968
+    decay = 0.9983
     lp = 0.0
-    drive = 1.45
+    drive = 1.18
     drive_norm = math.tanh(drive)
 
     left_gain = max(0.0, min(1.0, 0.5 * (1.0 - pan)))
     right_gain = max(0.0, min(1.0, 0.5 * (1.0 + pan)))
 
-    attack = max(1, int(0.007 * SAMPLE_RATE))
-    release = max(1, int(0.42 * SAMPLE_RATE))
+    attack = max(1, int(0.018 * SAMPLE_RATE))
+    release = max(1, int(0.78 * SAMPLE_RATE))
 
     phase2 = rng.random() * math.tau
     phase3 = rng.random() * math.tau
@@ -125,13 +125,13 @@ def add_pluck(
         idx = (idx + 1) % delay
 
         # Add lightly compressed upper harmonics for electric-guitar character.
-        s = y + 0.26 * math.sin(p2) + 0.11 * math.sin(p3)
+        s = y + 0.17 * math.sin(p2) + 0.06 * math.sin(p3)
         p += w
         p2 += w2
         p3 += w3
 
         # Gentle single-pole lowpass.
-        lp += 0.24 * (s - lp)
+        lp += 0.17 * (s - lp)
         s = lp
 
         # Soft clipping for low-gain overdrive character.
@@ -161,9 +161,8 @@ def render_loop(filename: str, bpm: int, progression: list[str], out_dir: Path) 
 
     rng = random.Random(filename)
     strums = [
-        (0.00, 2.8, 0.21),
-        (2.00, 2.1, 0.14),
-        (3.50, 1.1, 0.10),
+        (0.00, 3.6, 0.16),
+        (2.25, 2.6, 0.11),
     ]
 
     for bar in range(bars):
@@ -179,8 +178,8 @@ def render_loop(filename: str, bpm: int, progression: list[str], out_dir: Path) 
             start_sec=bar_start + 0.01,
             freq=root_hz,
             duration_sec=3.25 * beat_sec,
-            amp=0.14,
-            pan=-0.12 + rng.uniform(-0.03, 0.03),
+            amp=0.11,
+            pan=-0.10 + rng.uniform(-0.025, 0.025),
             rng=rng,
         )
 
@@ -190,18 +189,18 @@ def render_loop(filename: str, bpm: int, progression: list[str], out_dir: Path) 
                 add_pluck(
                     left,
                     right,
-                    start_sec=strum_start + n * 0.027,
+                    start_sec=strum_start + n * 0.032,
                     freq=note_to_freq(note),
-                    duration_sec=max(0.45, sustain_beats * beat_sec),
-                    amp=base_amp * (0.9 ** n),
-                    pan=-0.08 + 0.055 * n + rng.uniform(-0.025, 0.025),
+                    duration_sec=max(0.75, sustain_beats * beat_sec),
+                    amp=base_amp * (0.88 ** n),
+                    pan=-0.06 + 0.045 * n + rng.uniform(-0.02, 0.02),
                     rng=rng,
                 )
 
     # Slow breathing-style amplitude drift.
     for i in range(frames):
         t = i / SAMPLE_RATE
-        mod = 1.0 + 0.035 * math.sin(math.tau * 0.18 * t) + 0.02 * math.sin(math.tau * 0.07 * t + 0.8)
+        mod = 1.0 + 0.027 * math.sin(math.tau * 0.15 * t) + 0.013 * math.sin(math.tau * 0.06 * t + 0.8)
         left[i] *= mod
         right[i] *= mod
 
