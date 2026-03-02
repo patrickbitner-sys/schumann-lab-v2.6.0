@@ -8,8 +8,8 @@
 //  - High‑quality soundscape support: the audio engine can now load
 //    48 kHz/24‑bit stereo loops for ocean/rain/birds/waves.  Provide your
 //    own files in the assets folder and the app will use them when available.
-//  - A breathing visual whose cycle is quantised to multiples of the band period
-//    and which displays sync info (band, multiplier and phase).
+//  - A breathing visual with cycle control in a 3–19 second window,
+//    snapped to integer Schumann periods (N×T) with live sync info.
 //  - Autosweep functionality to sweep the interaural phase slider across 0–360°
 //    over a user‑defined duration.
 //  - Best‑phase marking per band, reused for meditation sessions.
@@ -49,7 +49,7 @@
 //  - Added haptic feedback and audio chime when marking strongest phase.
 //  - Updated build and cache versions to v2.0.4.
 console.log("app.js loaded");
-const APP_VERSION = 'v2.6.1-dev';
+const APP_VERSION = 'v2.6.6-dev';
 const PHASE_TARGET_DEGREES = 18; // 5% of a full 360° cycle.
 // ---- Core audio state ----
 let audioCtx = null;
@@ -115,6 +115,8 @@ let selectedChordLoop = null;
 // BufferSource for the currently playing chord loop.  When a loop is active
 // this node is stored here so it can be stopped on restart.
 let chordBufferSource = null;
+let chordLoopSequenceTimer = null;
+let chordLoopSequenceToken = 0;
 // Cache of decoded chord loop buffers by instrument and file name.
 const chordBufferCache = {};
 
@@ -147,8 +149,75 @@ let motionPanners = [];
 // Impulse response reverb
 // Name of the currently selected IR ('none', 'forest', 'temple').
 let selectedIR = 'none';
-// Cache of decoded impulse responses by name.
+// Cache of processed impulse responses keyed by name + tuning options.
 const irBuffers = {};
+// Cache of raw decoded impulse responses keyed by name.
+const irRawBuffers = {};
+
+const DEV_REVERB_DEFAULTS = Object.freeze({
+  normalizeTrimDb: 0,
+  durationSec: 4.2,
+  lowpassHz: 0,
+  wetTrim: 1,
+  sendTrim: 1
+});
+
+const devReverbTuning = {
+  normalizeTrimDb: DEV_REVERB_DEFAULTS.normalizeTrimDb,
+  durationSec: DEV_REVERB_DEFAULTS.durationSec,
+  lowpassHz: DEV_REVERB_DEFAULTS.lowpassHz,
+  wetTrim: DEV_REVERB_DEFAULTS.wetTrim,
+  sendTrim: DEV_REVERB_DEFAULTS.sendTrim
+};
+
+const DEV_REVERB_PRESETS = Object.freeze({
+  temple: Object.freeze({
+    calm: Object.freeze({
+      normalizeTrimDb: -4.5,
+      durationSec: 2.8,
+      lowpassHz: 4200,
+      wetTrim: 0.82,
+      sendTrim: 0.72
+    }),
+    balanced: Object.freeze({
+      normalizeTrimDb: -2.2,
+      durationSec: 3.6,
+      lowpassHz: 5200,
+      wetTrim: 1.0,
+      sendTrim: 0.9
+    }),
+    deep: Object.freeze({
+      normalizeTrimDb: -0.8,
+      durationSec: 5.0,
+      lowpassHz: 6200,
+      wetTrim: 1.2,
+      sendTrim: 1.08
+    })
+  }),
+  forest: Object.freeze({
+    calm: Object.freeze({
+      normalizeTrimDb: -2.6,
+      durationSec: 2.2,
+      lowpassHz: 4600,
+      wetTrim: 0.78,
+      sendTrim: 0.7
+    }),
+    balanced: Object.freeze({
+      normalizeTrimDb: -1.2,
+      durationSec: 3.2,
+      lowpassHz: 6400,
+      wetTrim: 0.96,
+      sendTrim: 0.86
+    }),
+    deep: Object.freeze({
+      normalizeTrimDb: 0,
+      durationSec: 4.8,
+      lowpassHz: 7800,
+      wetTrim: 1.18,
+      sendTrim: 1.06
+    })
+  })
+});
 
 // Current chord oscillators and timer for cycling between chords.  When
 // active, chordTimer holds the interval ID and chordOscs stores the
@@ -264,6 +333,11 @@ function stopChordProgression() {
  * been created to play a loop, this stops and disconnects it.
  */
 function stopChordBuffer() {
+  chordLoopSequenceToken++;
+  if (chordLoopSequenceTimer) {
+    clearTimeout(chordLoopSequenceTimer);
+    chordLoopSequenceTimer = null;
+  }
   if (chordBufferSource) {
     try { chordBufferSource.stop(); } catch {}
     try { chordBufferSource.disconnect(); } catch {}
@@ -364,6 +438,12 @@ function scoreChordLoop(loop) {
     if (k && text.includes(String(k).toLowerCase())) score -= 18;
   });
 
+  // Guitar-specific balancing: prioritize gentler acoustic layers and
+  // de-emphasize static Strat one-shot style loops.
+  if (text.includes('acoustic') || text.includes('nylstr') || text.includes('sixstr')) score += 8;
+  if (text.includes('ambient')) score += 4;
+  if (text.includes('strat')) score -= 10;
+
   return score;
 }
 
@@ -420,6 +500,73 @@ async function ensureChordBuffer(instrument, fileName) {
 async function startChordLoop() {
   stopChordBuffer();
   if (!audioCtx || !chordInstrument || chordInstrument === 'none' || !selectedChordLoop) return;
+  if (chordInstrument === 'guitar' && chordManifest && Array.isArray(chordManifest.guitar) && chordManifest.guitar.length) {
+    const ranked = sortChordLoops(chordManifest.guitar).map(({ loop }) => loop && loop.file).filter(Boolean);
+    if (!ranked.length) return;
+    const isStratLoop = (file) => /strat/i.test(String(file || ''));
+    const acousticFirst = ranked.filter((file) => /(acoustic|nylstr|sixstr)/i.test(file) && !isStratLoop(file));
+    let sequence = acousticFirst.length >= 4 ? acousticFirst : ranked.filter((file) => !isStratLoop(file));
+    if (!sequence.length) sequence = ranked.slice();
+    if (selectedChordLoop && !isStratLoop(selectedChordLoop)) {
+      const idx = sequence.indexOf(selectedChordLoop);
+      if (idx > -1) {
+        sequence.splice(idx, 1);
+        sequence.unshift(selectedChordLoop);
+      }
+    }
+
+    const sequenceToken = chordLoopSequenceToken;
+    const loopGain = audioCtx.createGain();
+    loopGain.gain.value = 0.24;
+    const loopPan = audioCtx.createStereoPanner();
+    if (motionGainNode) {
+      motionGainNode.connect(loopPan.pan);
+    }
+    motionPanners.push(loopPan);
+    extraNodes.push(loopPan, loopGain);
+
+    let cursor = 0;
+    const playNext = async () => {
+      if (sequenceToken !== chordLoopSequenceToken) return;
+      if (!audioCtx || chordInstrument !== 'guitar') return;
+      if (!sequence.length) return;
+      const file = sequence[cursor % sequence.length];
+      cursor++;
+      const buffer = await ensureChordBuffer('guitar', file);
+      if (!buffer || sequenceToken !== chordLoopSequenceToken) {
+        chordLoopSequenceTimer = setTimeout(playNext, 1200);
+        return;
+      }
+
+      if (chordBufferSource) {
+        try { chordBufferSource.stop(); } catch {}
+        try { chordBufferSource.disconnect(); } catch {}
+        chordBufferSource = null;
+      }
+
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer;
+      src.loop = false;
+      if (buffer.duration < 8) {
+        src.playbackRate.value = 0.72;
+      } else if (buffer.duration < 12) {
+        src.playbackRate.value = 0.86;
+      } else {
+        src.playbackRate.value = 1.0;
+      }
+      src.connect(loopGain).connect(loopPan).connect(masterGain);
+      src.start();
+      chordBufferSource = src;
+
+      const effectiveDurMs = (buffer.duration / src.playbackRate.value) * 1000;
+      const nextMs = Math.max(9000, Math.min(24000, Math.round(effectiveDurMs * 0.94)));
+      chordLoopSequenceTimer = setTimeout(playNext, nextMs);
+    };
+
+    playNext();
+    return;
+  }
+
   const buffer = await ensureChordBuffer(chordInstrument, selectedChordLoop);
   if (!buffer) return;
   const src = audioCtx.createBufferSource();
@@ -457,26 +604,142 @@ function getAudioBufferRms(buffer) {
   return count ? Math.sqrt(sum / count) : 0;
 }
 
-function getCompensatedIrWetGain(name, buffer) {
-  // Start with mode-specific defaults.
-  const baseWet = name === 'temple' ? 0.42 : 0.58;
+function getAudioBufferPeak(buffer) {
+  if (!buffer) return 0;
+  const channels = buffer.numberOfChannels || 0;
+  if (!channels) return 0;
+  let peak = 0;
+  for (let c = 0; c < channels; c++) {
+    const data = buffer.getChannelData(c);
+    for (let i = 0; i < data.length; i++) {
+      const v = Math.abs(data[i]);
+      if (v > peak) peak = v;
+    }
+  }
+  return peak;
+}
+
+function clampNumber(value, min, max, fallback) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
+
+function dbToGain(db) {
+  return Math.pow(10, db / 20);
+}
+
+function clearProcessedIrCache() {
+  Object.keys(irBuffers).forEach((k) => {
+    delete irBuffers[k];
+  });
+}
+
+function getCurrentIrTuning(name) {
+  const base = name === 'temple'
+    ? {
+        dryLevel: 0.9,
+        send: 0.52,
+        preDelaySec: 0.022,
+        hpHz: 115,
+        lpHz: 5900
+      }
+    : {
+        dryLevel: 0.92,
+        send: 0.47,
+        preDelaySec: 0.014,
+        hpHz: 150,
+        lpHz: 7600
+      };
+
+  const sendTrim = clampNumber(devReverbTuning.sendTrim, 0.3, 1.8, 1);
+  const wetTrim = clampNumber(devReverbTuning.wetTrim, 0.3, 1.8, 1);
+  const durationSec = clampNumber(devReverbTuning.durationSec, 0.8, 8, DEV_REVERB_DEFAULTS.durationSec);
+  const normalizeTrimDb = clampNumber(devReverbTuning.normalizeTrimDb, -18, 6, 0);
+  const forcedLowpass = clampNumber(devReverbTuning.lowpassHz, 0, 12000, 0);
+
+  return {
+    ...base,
+    send: clampNumber(base.send * sendTrim, 0.06, 1.25, base.send),
+    wetTrim,
+    durationSec,
+    normalizeTrimDb,
+    lpHz: forcedLowpass > 0 ? forcedLowpass : base.lpHz
+  };
+}
+
+function getIrCacheKey(name, tuning) {
+  const trim = clampNumber(tuning.normalizeTrimDb, -18, 6, 0).toFixed(1);
+  const dur = clampNumber(tuning.durationSec, 0.8, 8, DEV_REVERB_DEFAULTS.durationSec).toFixed(2);
+  return `${name}|trim:${trim}|dur:${dur}`;
+}
+
+function normalizeIrBuffer(name, buffer, tuning = {}) {
+  if (!audioCtx || !buffer) return buffer;
+  const peak = getAudioBufferPeak(buffer);
+  const rms = getAudioBufferRms(buffer);
+  if (!Number.isFinite(peak) || peak <= 0 || !Number.isFinite(rms) || rms <= 0) return buffer;
+
+  // Temple IR is very hot in this asset set; normalize both spaces to stable
+  // operating levels and trim excessive late tail energy.
+  const targetPeak = name === 'temple' ? 0.3 : 0.48;
+  const targetRms = name === 'temple' ? 0.034 : 0.06;
+  const peakGain = targetPeak / peak;
+  const rmsGain = targetRms / rms;
+  const baseGain = Math.min(peakGain, rmsGain);
+  const trimGain = dbToGain(clampNumber(tuning.normalizeTrimDb, -18, 6, 0));
+  const gain = clampNumber(baseGain * trimGain, 0.008, 2.4, 1);
+
+  const durationSec = clampNumber(tuning.durationSec, 0.8, 8, DEV_REVERB_DEFAULTS.durationSec);
+  const targetLength = Math.max(256, Math.min(buffer.length, Math.floor(buffer.sampleRate * durationSec)));
+  const shouldCrop = targetLength < buffer.length;
+
+  if (Math.abs(gain - 1) < 0.015 && !shouldCrop) return buffer;
+
+  const normalized = audioCtx.createBuffer(
+    buffer.numberOfChannels,
+    targetLength,
+    buffer.sampleRate
+  );
+  const fadeSamples = shouldCrop ? Math.min(Math.floor(buffer.sampleRate * 0.14), Math.floor(targetLength * 0.42)) : 0;
+  for (let c = 0; c < buffer.numberOfChannels; c++) {
+    const src = buffer.getChannelData(c);
+    const dst = normalized.getChannelData(c);
+    for (let i = 0; i < targetLength; i++) {
+      let v = src[i] * gain;
+      if (fadeSamples > 0 && i >= targetLength - fadeSamples) {
+        const remaining = (targetLength - 1 - i) / Math.max(1, fadeSamples - 1);
+        const fade = Math.sin((Math.PI * 0.5) * Math.max(0, Math.min(1, remaining)));
+        v *= fade;
+      }
+      // Soft-limit extreme residual peaks to remove crackle/distortion.
+      if (v > 0.97) v = 0.97 + (v - 0.97) * 0.12;
+      if (v < -0.97) v = -0.97 + (v + 0.97) * 0.12;
+      dst[i] = v;
+    }
+  }
+  return normalized;
+}
+
+function getCompensatedIrWetGain(name, buffer, tuning = {}) {
+  // Base levels chosen for an obvious but non-fatiguing acoustic space.
+  const baseWet = name === 'temple' ? 0.42 : 0.37;
   const rms = getAudioBufferRms(buffer);
   if (!Number.isFinite(rms) || rms <= 0) return baseWet;
-  // Normalize wildly different IR loudness profiles to a comparable wet level.
-  const targetRms = 0.12;
-  const comp = Math.max(0.05, Math.min(1.5, targetRms / rms));
-  return Math.max(0.03, Math.min(0.95, baseWet * comp));
+  const targetRms = name === 'temple' ? 0.036 : 0.052;
+  const comp = Math.max(0.68, Math.min(1.42, targetRms / rms));
+  const wetTrim = clampNumber(tuning.wetTrim, 0.3, 1.8, 1);
+  return Math.max(0.14, Math.min(0.88, baseWet * comp * wetTrim));
 }
 
 /**
- * Load an impulse response buffer for the given name. Caches the result to
- * avoid repeated decodes. Returns a promise that resolves with the
- * AudioBuffer or null if loading fails.
+ * Load raw impulse response data (decoded AudioBuffer) for the given name.
+ * Cached by IR name. Returns null on failure.
  * @param {string} name
  */
-async function loadIRBuffer(name) {
+async function loadIRRawBuffer(name) {
   if (!audioCtx || !name || name === 'none') return null;
-  if (irBuffers[name]) return irBuffers[name];
+  if (irRawBuffers[name]) return irRawBuffers[name];
 
   const keywordMap = {
     forest: ['forest', 'wheldrake', 'wood'],
@@ -499,16 +762,43 @@ async function loadIRBuffer(name) {
       const resp = await fetch(url, { cache: 'no-cache' });
       if (!resp.ok) continue;
       const arrayBuf = await resp.arrayBuffer();
-      const buf = await audioCtx.decodeAudioData(arrayBuf);
-      const rms = getAudioBufferRms(buf);
-      console.info(`[IR] loaded ${name}: ${buf.duration.toFixed(2)}s, rms=${rms.toFixed(5)}`);
-      irBuffers[name] = buf;
-      return buf;
+      const decoded = await audioCtx.decodeAudioData(arrayBuf);
+      irRawBuffers[name] = decoded;
+      return decoded;
     } catch (e) {
       // Continue trying candidates.
     }
   }
   return null;
+}
+
+/**
+ * Load a processed impulse response buffer for the given name and tuning.
+ * Processing includes normalization, optional duration crop, and cache keying.
+ * @param {string} name
+ * @param {object} tuning
+ */
+async function loadIRBuffer(name, tuning = getCurrentIrTuning(name)) {
+  if (!audioCtx || !name || name === 'none') return null;
+  const cacheKey = getIrCacheKey(name, tuning);
+  if (irBuffers[cacheKey]) return irBuffers[cacheKey];
+
+  const raw = await loadIRRawBuffer(name);
+  if (!raw) return null;
+
+  const preRms = getAudioBufferRms(raw);
+  const prePeak = getAudioBufferPeak(raw);
+  const buf = normalizeIrBuffer(name, raw, tuning);
+  const rms = getAudioBufferRms(buf);
+  const peak = getAudioBufferPeak(buf);
+  console.info(
+    `[IR] loaded ${name}: ${buf.duration.toFixed(2)}s, ` +
+    `rms ${preRms.toFixed(5)}->${rms.toFixed(5)}, ` +
+    `peak ${prePeak.toFixed(5)}->${peak.toFixed(5)}, ` +
+    `trim=${tuning.normalizeTrimDb.toFixed(1)}dB`
+  );
+  irBuffers[cacheKey] = buf;
+  return buf;
 }
 
 /**
@@ -745,6 +1035,20 @@ const volumeRange  = $('volumeRange');
 const volumeLabel  = $('volumeLabel');
 const toneMixRange = $('toneMixRange');
 const toneMixLabel = $('toneMixLabel');
+const devAudioTuningToggle = $('devAudioTuningToggle');
+const devAudioTuningPanel = $('devAudioTuningPanel');
+const devIrPreset = $('devIrPreset');
+const devIrPresetLabel = $('devIrPresetLabel');
+const devIrNormalizeTrim = $('devIrNormalizeTrim');
+const devIrNormalizeTrimLabel = $('devIrNormalizeTrimLabel');
+const devIrDuration = $('devIrDuration');
+const devIrDurationLabel = $('devIrDurationLabel');
+const devIrLowpass = $('devIrLowpass');
+const devIrLowpassLabel = $('devIrLowpassLabel');
+const devIrWetTrim = $('devIrWetTrim');
+const devIrWetTrimLabel = $('devIrWetTrimLabel');
+const devIrSendTrim = $('devIrSendTrim');
+const devIrSendTrimLabel = $('devIrSendTrimLabel');
 
 // Soundscape controls (Explore)
 const oceanRange = $('oceanRange');
@@ -777,6 +1081,19 @@ const medBreathSeconds   = $('medBreathSeconds');
 const medBreathLabel     = $('medBreathLabel');
 const medBreathOrb       = $('medBreathOrb');
 const medBreathSyncLabel = $('medBreathSyncLabel');
+const BREATH_SECONDS_MIN = 3;
+const BREATH_SECONDS_MAX = 19;
+const BREATH_SECONDS_SLIDER_STEP = 'any';
+const DEFAULT_BREATH_MULTIPLIER = 64;
+const DEFAULT_BREATH_SECONDS = DEFAULT_BREATH_MULTIPLIER / 7.83;
+const BREATH_ORB_MIN_SCALE = 0.76;
+const BREATH_ORB_MAX_SCALE = 1.08;
+const BREATH_PARTICLE_COUNT = 60;
+let breathCycleMultiplier = DEFAULT_BREATH_MULTIPLIER;
+let breathCycleSeconds = DEFAULT_BREATH_SECONDS;
+let breathOrbStates = [];
+let breathOrbAnimId = null;
+let breathOrbLastTs = 0;
 
 // Journal controls (Med tab)
 const journalNote      = $('journalNote');
@@ -1005,10 +1322,6 @@ function handleHideJournalEntries() {
   // Simply clear the container; the data in localStorage remains intact
   journalEntriesContainer.innerHTML = '<p class="small">Journal entries hidden.</p>';
 }
-
-// List of multipliers for breathing (multiples of Schumann period)
-// Breath cycle multipliers: lowest value ~2s for fundamental (16×T) up to ~16s (128×T)
-const BREATH_MULTIPLIERS = [16, 24, 32, 40, 48, 64, 80, 96, 112, 128];
 
 // ---- Audio initialisation helpers ----
 function ensureAudio() {
@@ -1374,43 +1687,350 @@ function updateSoundscapes() {
 }
 
 // ---- Breathing visual ----
-function updateBreathAnimation() {
-  // Determine the current index from primary slider; fallback to med slider
-  let idx = 5;
-  if (breathSeconds) {
-    idx = parseInt(breathSeconds.value, 10);
+function getBreathBandTiming() {
+  const bandHzRaw = getCurrentBandHz();
+  const bandHz = Number.isFinite(bandHzRaw) && bandHzRaw > 0 ? bandHzRaw : 7.83;
+  return { bandHz, period: 1 / bandHz };
+}
+
+function getBreathMultiplierBounds(period) {
+  const minMultiplier = Math.max(1, Math.ceil(BREATH_SECONDS_MIN / period));
+  const maxMultiplier = Math.max(minMultiplier, Math.floor(BREATH_SECONDS_MAX / period));
+  return { minMultiplier, maxMultiplier };
+}
+
+function clampBreathMultiplier(multiplier, minMultiplier, maxMultiplier) {
+  let snapped = Number.isFinite(multiplier) ? Math.round(multiplier) : DEFAULT_BREATH_MULTIPLIER;
+  if (!Number.isFinite(snapped)) snapped = DEFAULT_BREATH_MULTIPLIER;
+  return Math.max(minMultiplier, Math.min(maxMultiplier, snapped));
+}
+
+function resolveBreathCycle(preferredSeconds) {
+  const { bandHz, period } = getBreathBandTiming();
+  const { minMultiplier, maxMultiplier } = getBreathMultiplierBounds(period);
+
+  let desiredMultiplier = Number.NaN;
+  if (Number.isFinite(preferredSeconds)) {
+    desiredMultiplier = preferredSeconds / period;
+  } else if (Number.isFinite(breathCycleMultiplier)) {
+    desiredMultiplier = breathCycleMultiplier;
+  } else if (breathSeconds) {
+    const sec = parseFloat(breathSeconds.value);
+    if (Number.isFinite(sec)) desiredMultiplier = sec / period;
   } else if (medBreathSeconds) {
-    idx = parseInt(medBreathSeconds.value, 10);
+    const sec = parseFloat(medBreathSeconds.value);
+    if (Number.isFinite(sec)) desiredMultiplier = sec / period;
+  } else {
+    desiredMultiplier = DEFAULT_BREATH_MULTIPLIER;
   }
-  if (!Number.isFinite(idx)) idx = 5;
-  idx = Math.max(0, Math.min(BREATH_MULTIPLIERS.length - 1, idx));
-  // Propagate value to both sliders
-  if (breathSeconds && breathSeconds.value != String(idx)) {
-    breathSeconds.value = String(idx);
+
+  const multiplier = clampBreathMultiplier(desiredMultiplier, minMultiplier, maxMultiplier);
+  return {
+    bandHz,
+    period,
+    multiplier,
+    seconds: multiplier * period,
+    minMultiplier,
+    maxMultiplier
+  };
+}
+
+function applyBreathSliderConfig(slider) {
+  if (!slider) return;
+  slider.min = String(BREATH_SECONDS_MIN);
+  slider.max = String(BREATH_SECONDS_MAX);
+  slider.step = BREATH_SECONDS_SLIDER_STEP;
+}
+
+function ensureBreathOrbState(orb) {
+  if (!orb) return null;
+  const existing = breathOrbStates.find((state) => state.orb === orb);
+  if (existing) return existing;
+
+  let core = orb.querySelector('.orb-core');
+  if (!core) {
+    core = document.createElement('div');
+    core.className = 'orb-core';
+    orb.appendChild(core);
   }
-  if (medBreathSeconds && medBreathSeconds.value != String(idx)) {
-    medBreathSeconds.value = String(idx);
+  let canvas = core.querySelector('.orb-particle-canvas');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    canvas.className = 'orb-particle-canvas';
+    core.appendChild(canvas);
   }
-  const multiplier = BREATH_MULTIPLIERS[idx];
-  const bandHz = getCurrentBandHz();
-  const period = bandHz > 0 ? 1 / bandHz : 0;
-  const sec = period * multiplier;
-  const durationText = `${sec.toFixed(2)} s (${multiplier}×T)`;
+  const staleSpec = orb.querySelector('.orb-specular');
+  if (staleSpec) staleSpec.remove();
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  const state = {
+    orb,
+    canvas,
+    ctx,
+    particles: [],
+    lastPeak: 'min',
+    flashTimer: null,
+    radiusPx: 0,
+    dpr: 1
+  };
+  return state;
+}
+
+function ensureBreathOrbCanvas(state) {
+  if (!state || !state.orb || !state.canvas) return;
+  const size = Math.max(72, Math.floor(Math.min(state.orb.clientWidth, state.orb.clientHeight) || 144));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const target = Math.max(72, Math.floor(size * dpr));
+  if (state.canvas.width !== target || state.canvas.height !== target) {
+    state.canvas.width = target;
+    state.canvas.height = target;
+    state.dpr = dpr;
+    state.radiusPx = target * 0.475;
+    state.particles = [];
+  }
+}
+
+function randomPointInUnitSphere() {
+  let x = 0;
+  let y = 0;
+  let z = 0;
+  do {
+    x = Math.random() * 2 - 1;
+    y = Math.random() * 2 - 1;
+    z = Math.random() * 2 - 1;
+  } while (x * x + y * y + z * z > 1);
+  return { x, y, z };
+}
+
+function randomBiasedPointInUnitSphere(surfaceBias) {
+  const p = randomPointInUnitSphere();
+  const bias = clampNumber(surfaceBias, 0, 1, 0);
+  const radius = Math.hypot(p.x, p.y, p.z);
+  if (radius < 0.0001) return p;
+  const surfaceTarget = 0.42 + Math.random() * 0.58;
+  const desiredRadius = radius * (1 - bias) + surfaceTarget * bias;
+  const scale = desiredRadius / radius;
+  return {
+    x: p.x * scale,
+    y: p.y * scale,
+    z: p.z * scale
+  };
+}
+
+function spawnBreathParticle(radiusPx) {
+  const p = randomBiasedPointInUnitSphere(0.55);
+  const target = randomBiasedPointInUnitSphere(0.4);
+  const tint = Math.random() < 0.58 ? 'white' : 'blue';
+  return {
+    x: p.x,
+    y: p.y,
+    z: p.z,
+    vx: (Math.random() - 0.5) * 0.2,
+    vy: (Math.random() - 0.5) * 0.2,
+    vz: (Math.random() - 0.5) * 0.2,
+    tx: target.x,
+    ty: target.y,
+    tz: target.z,
+    targetLife: 1.4 + Math.random() * 3,
+    spin: (Math.random() * 2 - 1) * 0.03,
+    r: 1.2 + Math.random() * 2.1,
+    a: 0.46 + Math.random() * 0.5,
+    tint,
+    radiusPx
+  };
+}
+
+function renderBreathOrbParticles(state, level, dtSec) {
+  if (!state || !state.ctx || !state.canvas) return;
+  ensureBreathOrbCanvas(state);
+  const { ctx, canvas } = state;
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = state.radiusPx || Math.min(w, h) * 0.475;
+  const innerRadius = radius * 0.965;
+  const moveGain = 1.1 + level * 0.42;
+  const safeDt = Math.min(0.05, Math.max(0.001, dtSec));
+
+  while (state.particles.length < BREATH_PARTICLE_COUNT) {
+    state.particles.push(spawnBreathParticle(innerRadius));
+  }
+  if (state.particles.length > BREATH_PARTICLE_COUNT) {
+    state.particles.length = BREATH_PARTICLE_COUNT;
+  }
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+
+  state.particles.forEach((p) => {
+    p.targetLife -= safeDt;
+    const distToTarget = Math.hypot(p.tx - p.x, p.ty - p.y, p.tz - p.z);
+    if (p.targetLife <= 0 || distToTarget < 0.12) {
+      const next = randomBiasedPointInUnitSphere(0.4);
+      p.tx = next.x;
+      p.ty = next.y;
+      p.tz = next.z;
+      p.targetLife = 1.4 + Math.random() * 3;
+    }
+
+    // Per-particle steering targets full sphere occupancy instead of an orbital ring.
+    p.vx += (p.tx - p.x) * 0.48 * safeDt;
+    p.vy += (p.ty - p.y) * 0.48 * safeDt;
+    p.vz += (p.tz - p.z) * 0.48 * safeDt;
+
+    // Soft isotropic center pull keeps particles inside the orb volume.
+    p.vx += (-p.x) * 0.015 * safeDt;
+    p.vy += (-p.y) * 0.015 * safeDt;
+    p.vz += (-p.z) * 0.015 * safeDt;
+
+    // Mild per-particle spin preserves depth motion without a global ellipse.
+    p.vx += (p.spin * p.y) * safeDt;
+    p.vy += (-p.spin * p.x) * safeDt;
+
+    p.vx += (Math.random() - 0.5) * 0.14 * safeDt;
+    p.vy += (Math.random() - 0.5) * 0.14 * safeDt;
+    p.vz += (Math.random() - 0.5) * 0.14 * safeDt;
+
+    const damping = Math.exp(-1.15 * safeDt);
+    p.vx *= damping;
+    p.vy *= damping;
+    p.vz *= damping;
+
+    const speed = Math.hypot(p.vx, p.vy, p.vz);
+    const maxSpeed = 0.8;
+    if (speed > maxSpeed) {
+      const s = maxSpeed / speed;
+      p.vx *= s;
+      p.vy *= s;
+      p.vz *= s;
+    }
+
+    p.x += p.vx * safeDt * moveGain;
+    p.y += p.vy * safeDt * moveGain;
+    p.z += p.vz * safeDt * moveGain;
+
+    const dist3 = Math.hypot(p.x, p.y, p.z);
+    const wall = 1;
+    if (dist3 > wall && dist3 > 0.0001) {
+      const nx = p.x / dist3;
+      const ny = p.y / dist3;
+      const nz = p.z / dist3;
+      const dot = p.vx * nx + p.vy * ny + p.vz * nz;
+      p.vx -= 2 * dot * nx;
+      p.vy -= 2 * dot * ny;
+      p.vz -= 2 * dot * nz;
+      p.x = nx * wall;
+      p.y = ny * wall;
+      p.z = nz * wall;
+    }
+
+    const parallax = 1 + p.z * 0.09;
+    const px = cx + p.x * innerRadius * parallax;
+    const py = cy + p.y * innerRadius * parallax;
+    const depth = (p.z + 1) * 0.5; // 0..1 back->front
+    const perspective = 0.42 + depth * 1.18;
+    const alpha = Math.min(1, (p.a * (0.5 + depth * 0.82)) + level * 0.2);
+    const glow = p.r * perspective * (1.6 + level * 1.3);
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, glow);
+    if (p.tint === 'white') {
+      grad.addColorStop(0, `rgba(255, 255, 255, ${Math.min(1, alpha * 1.12)})`);
+      grad.addColorStop(0.52, `rgba(214, 231, 255, ${alpha * 0.68})`);
+      grad.addColorStop(1, 'rgba(182, 207, 255, 0)');
+    } else {
+      grad.addColorStop(0, `rgba(188, 241, 255, ${alpha})`);
+      grad.addColorStop(0.5, `rgba(73, 182, 255, ${alpha * 0.7})`);
+      grad.addColorStop(1, 'rgba(26, 106, 203, 0)');
+    }
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(px, py, glow, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.restore();
+}
+
+function triggerBreathFlash(state, peak) {
+  if (!state || !state.orb) return;
+  const cls = peak === 'max' ? 'flash-max' : 'flash-min';
+  state.orb.classList.remove('flash-max', 'flash-min');
+  void state.orb.offsetWidth;
+  state.orb.classList.add(cls);
+  if (state.flashTimer) clearTimeout(state.flashTimer);
+  state.flashTimer = setTimeout(() => {
+    state.orb.classList.remove(cls);
+    state.flashTimer = null;
+  }, 340);
+}
+
+function animateBreathOrbs(ts) {
+  if (!breathOrbStates.length) {
+    breathOrbAnimId = null;
+    return;
+  }
+  const nowSec = ts / 1000;
+  const prevTs = breathOrbLastTs || ts;
+  const dtSec = (ts - prevTs) / 1000;
+  breathOrbLastTs = ts;
+  const cycleSec = Math.max(BREATH_SECONDS_MIN, breathCycleSeconds || DEFAULT_BREATH_SECONDS);
+
+  breathOrbStates.forEach((state) => {
+    if (!state || !state.orb) return;
+    const phase = (((nowSec % cycleSec) + cycleSec) % cycleSec) / cycleSec;
+    const level = 0.5 - 0.5 * Math.cos(phase * Math.PI * 2);
+    const scale = BREATH_ORB_MIN_SCALE + level * (BREATH_ORB_MAX_SCALE - BREATH_ORB_MIN_SCALE);
+    const glowY = Math.round(12 + level * 12);
+    const glowBlur = Math.round(22 + level * 18);
+    state.orb.style.setProperty('--orb-scale', scale.toFixed(3));
+    state.orb.style.filter = `drop-shadow(0 ${glowY}px ${glowBlur}px rgba(6, 12, 30, 0.74))`;
+    renderBreathOrbParticles(state, level, dtSec);
+
+    if (level > 0.994 && state.lastPeak !== 'max') {
+      state.lastPeak = 'max';
+      triggerBreathFlash(state, 'max');
+    } else if (level < 0.006 && state.lastPeak !== 'min') {
+      state.lastPeak = 'min';
+      triggerBreathFlash(state, 'min');
+    } else if (level > 0.2 && level < 0.8) {
+      state.lastPeak = 'mid';
+    }
+  });
+
+  breathOrbAnimId = requestAnimationFrame(animateBreathOrbs);
+}
+
+function initBreathOrbs() {
+  breathOrbStates = [];
+  [breathOrb, medBreathOrb].forEach((orb) => {
+    const state = ensureBreathOrbState(orb);
+    if (state) breathOrbStates.push(state);
+  });
+  if (!breathOrbStates.length) return;
+  if (breathOrbAnimId) cancelAnimationFrame(breathOrbAnimId);
+  breathOrbLastTs = performance.now();
+  breathOrbAnimId = requestAnimationFrame(animateBreathOrbs);
+}
+
+function updateBreathAnimation(preferredSeconds) {
+  const cycle = resolveBreathCycle(preferredSeconds);
+  breathCycleMultiplier = cycle.multiplier;
+  breathCycleSeconds = cycle.seconds;
+  const sliderText = cycle.seconds.toFixed(3);
+  if (breathSeconds && breathSeconds.value !== sliderText) breathSeconds.value = sliderText;
+  if (medBreathSeconds && medBreathSeconds.value !== sliderText) medBreathSeconds.value = sliderText;
+
+  const durationText = `${cycle.seconds.toFixed(2)} s (${cycle.multiplier}×T)`;
   // Update labels
   if (breathLabel) breathLabel.textContent = durationText;
   if (medBreathLabel) medBreathLabel.textContent = durationText;
-  // Update orb animation durations and restart to apply changes
-  [breathOrb, medBreathOrb].forEach((orb) => {
-    if (orb) {
-      orb.style.animationDuration = `${sec}s`;
-      orb.style.webkitAnimationDuration = `${sec}s`;
-      void orb.offsetWidth; // trigger reflow for Safari
-    }
-  });
   // Update sync labels showing band, multiplier and phase
   const phaseDeg = phaseRange ? parseFloat(phaseRange.value) : 0;
-  const phaseMs  = bandHz > 0 ? (phaseDeg / 360) * (1000 / bandHz) : 0;
-  const syncText = `Synced to ${bandHz.toFixed(2)} Hz · ${multiplier}×T · Phase ${phaseDeg.toFixed(0)}° (${phaseMs.toFixed(0)} ms)`;
+  const phaseMs  = cycle.bandHz > 0 ? (phaseDeg / 360) * (1000 / cycle.bandHz) : 0;
+  const syncText = `Synced to ${cycle.bandHz.toFixed(2)} Hz · ${cycle.multiplier}×T · Phase ${phaseDeg.toFixed(0)}° (${phaseMs.toFixed(0)} ms)`;
   if (breathSyncLabel) breathSyncLabel.textContent = syncText;
   if (medBreathSyncLabel) medBreathSyncLabel.textContent = syncText;
 }
@@ -1593,8 +2213,12 @@ function startGraph(freqHz) {
   analyser = audioCtx.createAnalyser();
   analyser.fftSize = 2048;
   scopeData = new Uint8Array(analyser.fftSize);
-  masterGain.connect(analyser);
+  const dryGain = audioCtx.createGain();
+  dryGain.gain.value = 1.0;
+  masterGain.connect(dryGain);
+  dryGain.connect(analyser);
   analyser.connect(audioCtx.destination);
+  extraNodes.push(dryGain);
 
   // Tone bus: apply a real right-channel phase delay to tonal stimulation.
   toneBusInput = audioCtx.createGain();
@@ -1608,30 +2232,60 @@ function startGraph(freqHz) {
   toneMerger.connect(masterGain);
   extraNodes.push(toneBusInput, toneSplitter, toneMerger, phaseDelayNode);
 
-  // If a reverb space is selected, set up a convolver in parallel with the dry path.
-  // Because this taps the master bus, ALL sources routed to masterGain (tone,
-  // soundscapes, chords, and echo layers) receive the selected IR.
+  // If a reverb space is selected, set up an explicit dry/wet bus split.
+  // This keeps IR differences obvious and ensures all sources routed to
+  // masterGain (tone, soundscapes, chords, and echoes) receive the effect.
   if (selectedIR && selectedIR !== 'none') {
+    const irTuning = getCurrentIrTuning(selectedIR);
+    dryGain.gain.value = irTuning.dryLevel;
+    const sendGain = audioCtx.createGain();
+    const wetPreDelay = audioCtx.createDelay(0.25);
     const conv = audioCtx.createConvolver();
+    const wetHP = audioCtx.createBiquadFilter();
+    const wetLP = audioCtx.createBiquadFilter();
+    const wetComp = audioCtx.createDynamicsCompressor();
     const wetGain = audioCtx.createGain();
+    wetHP.type = 'highpass';
+    wetLP.type = 'lowpass';
+    sendGain.gain.value = irTuning.send;
+    wetPreDelay.delayTime.value = irTuning.preDelaySec;
+    wetHP.frequency.value = irTuning.hpHz;
+    wetLP.frequency.value = irTuning.lpHz;
+    // The decoded buffers are already normalized by normalizeIrBuffer().
+    conv.normalize = true;
+    wetComp.threshold.value = -19;
+    wetComp.knee.value = 8;
+    wetComp.ratio.value = 3.6;
+    wetComp.attack.value = 0.005;
+    wetComp.release.value = 0.24;
     // Set to 0 until buffer loads; then apply IR-compensated wet gain.
     wetGain.gain.value = 0;
-    // Connect a copy of the master output into the convolver and then to the wet gain
-    masterGain.connect(conv);
-    conv.connect(wetGain).connect(audioCtx.destination);
+    masterGain.connect(sendGain);
+    sendGain.connect(wetPreDelay);
+    wetPreDelay.connect(conv);
+    conv.connect(wetHP);
+    wetHP.connect(wetLP);
+    wetLP.connect(wetComp);
+    wetComp.connect(wetGain);
+    wetGain.connect(analyser);
     // Asynchronously load the IR buffer if necessary and assign it
-    loadIRBuffer(selectedIR).then((buf) => {
+    loadIRBuffer(selectedIR, irTuning).then((buf) => {
       if (buf) {
         conv.buffer = buf;
-        const wet = getCompensatedIrWetGain(selectedIR, buf);
+        const wet = getCompensatedIrWetGain(selectedIR, buf, irTuning);
         wetGain.gain.value = wet;
-        console.info(`[IR] active ${selectedIR}: wetGain=${wet.toFixed(3)}`);
+        console.info(
+          `[IR] active ${selectedIR}: ` +
+          `dry=${irTuning.dryLevel.toFixed(2)} wet=${wet.toFixed(3)} ` +
+          `send=${sendGain.gain.value.toFixed(2)} predelay=${wetPreDelay.delayTime.value.toFixed(3)}s ` +
+          `lp=${wetLP.frequency.value.toFixed(0)}Hz dur=${buf.duration.toFixed(2)}s`
+        );
       }
     }).catch(() => {
       // Ignore errors: if the file cannot be loaded the convolver will simply
       // output silence.
     });
-    extraNodes.push(conv, wetGain);
+    extraNodes.push(sendGain, wetPreDelay, conv, wetHP, wetLP, wetComp, wetGain);
   }
 
   // When restarting the graph we also clear any existing motion panners
@@ -1992,6 +2646,123 @@ function updateToneMixLabel() {
     const currentBand = getCurrentBandHz();
     startGraph(currentBand);
   }
+}
+
+function getActiveIrPresetSpace() {
+  if (selectedIR === 'forest' || selectedIR === 'temple') return selectedIR;
+  return 'temple';
+}
+
+function formatPresetName(name) {
+  if (!name) return 'Custom';
+  return String(name).charAt(0).toUpperCase() + String(name).slice(1).toLowerCase();
+}
+
+function updateDevIrPresetLabel() {
+  if (!devIrPresetLabel || !devIrPreset) return;
+  const name = devIrPreset.value || 'custom';
+  if (name === 'custom') {
+    devIrPresetLabel.textContent = 'Custom';
+    return;
+  }
+  const space = getActiveIrPresetSpace();
+  const spaceName = formatPresetName(space);
+  devIrPresetLabel.textContent = `${formatPresetName(name)} (${spaceName})`;
+}
+
+function syncDevAudioTuningLabels() {
+  if (devIrNormalizeTrim && devIrNormalizeTrimLabel) {
+    const db = clampNumber(parseFloat(devIrNormalizeTrim.value), -18, 6, DEV_REVERB_DEFAULTS.normalizeTrimDb);
+    devIrNormalizeTrim.value = String(db);
+    devIrNormalizeTrimLabel.textContent = `${db.toFixed(1)} dB`;
+  }
+  if (devIrDuration && devIrDurationLabel) {
+    const sec = clampNumber(parseFloat(devIrDuration.value), 0.8, 8, DEV_REVERB_DEFAULTS.durationSec);
+    devIrDuration.value = sec.toFixed(1);
+    devIrDurationLabel.textContent = `${sec.toFixed(1)} s`;
+  }
+  if (devIrLowpass && devIrLowpassLabel) {
+    const hz = clampNumber(parseFloat(devIrLowpass.value), 0, 12000, DEV_REVERB_DEFAULTS.lowpassHz);
+    devIrLowpass.value = String(Math.round(hz));
+    devIrLowpassLabel.textContent = hz <= 0 ? 'Auto' : `${Math.round(hz)} Hz`;
+  }
+  if (devIrWetTrim && devIrWetTrimLabel) {
+    const wet = clampNumber(parseFloat(devIrWetTrim.value), 0.3, 1.8, DEV_REVERB_DEFAULTS.wetTrim);
+    devIrWetTrim.value = wet.toFixed(2);
+    devIrWetTrimLabel.textContent = `${Math.round(wet * 100)}%`;
+  }
+  if (devIrSendTrim && devIrSendTrimLabel) {
+    const send = clampNumber(parseFloat(devIrSendTrim.value), 0.3, 1.8, DEV_REVERB_DEFAULTS.sendTrim);
+    devIrSendTrim.value = send.toFixed(2);
+    devIrSendTrimLabel.textContent = `${Math.round(send * 100)}%`;
+  }
+  updateDevIrPresetLabel();
+}
+
+function pullDevAudioTuningValues() {
+  devReverbTuning.normalizeTrimDb = devIrNormalizeTrim
+    ? clampNumber(parseFloat(devIrNormalizeTrim.value), -18, 6, DEV_REVERB_DEFAULTS.normalizeTrimDb)
+    : DEV_REVERB_DEFAULTS.normalizeTrimDb;
+  devReverbTuning.durationSec = devIrDuration
+    ? clampNumber(parseFloat(devIrDuration.value), 0.8, 8, DEV_REVERB_DEFAULTS.durationSec)
+    : DEV_REVERB_DEFAULTS.durationSec;
+  devReverbTuning.lowpassHz = devIrLowpass
+    ? clampNumber(parseFloat(devIrLowpass.value), 0, 12000, DEV_REVERB_DEFAULTS.lowpassHz)
+    : DEV_REVERB_DEFAULTS.lowpassHz;
+  devReverbTuning.wetTrim = devIrWetTrim
+    ? clampNumber(parseFloat(devIrWetTrim.value), 0.3, 1.8, DEV_REVERB_DEFAULTS.wetTrim)
+    : DEV_REVERB_DEFAULTS.wetTrim;
+  devReverbTuning.sendTrim = devIrSendTrim
+    ? clampNumber(parseFloat(devIrSendTrim.value), 0.3, 1.8, DEV_REVERB_DEFAULTS.sendTrim)
+    : DEV_REVERB_DEFAULTS.sendTrim;
+}
+
+function applyDevReverbPreset(presetName, options = {}) {
+  const markCustom = options.markCustom === true;
+  const shouldRetune = options.shouldRetune !== false;
+  const space = options.space || getActiveIrPresetSpace();
+  const presetTable = DEV_REVERB_PRESETS[space] || DEV_REVERB_PRESETS.temple;
+  const preset = presetTable[presetName];
+  if (!preset) return;
+
+  if (devIrPreset && !markCustom) {
+    devIrPreset.value = presetName;
+  }
+  if (devIrNormalizeTrim) devIrNormalizeTrim.value = String(preset.normalizeTrimDb);
+  if (devIrDuration) devIrDuration.value = String(preset.durationSec);
+  if (devIrLowpass) devIrLowpass.value = String(preset.lowpassHz);
+  if (devIrWetTrim) devIrWetTrim.value = String(preset.wetTrim);
+  if (devIrSendTrim) devIrSendTrim.value = String(preset.sendTrim);
+
+  syncDevAudioTuningLabels();
+  pullDevAudioTuningValues();
+  if (shouldRetune) {
+    queueDevIrRetune({ markCustom: false });
+  }
+}
+
+let devIrRestartTimer = null;
+function queueDevIrRetune(options = {}) {
+  const markCustom = options.markCustom !== false;
+  if (markCustom && devIrPreset && devIrPreset.value !== 'custom') {
+    devIrPreset.value = 'custom';
+  }
+  pullDevAudioTuningValues();
+  syncDevAudioTuningLabels();
+  clearProcessedIrCache();
+  if (devIrRestartTimer) clearTimeout(devIrRestartTimer);
+  devIrRestartTimer = setTimeout(() => {
+    devIrRestartTimer = null;
+    if (baseOsc && selectedIR !== 'none') {
+      const currentBand = getCurrentBandHz();
+      startGraph(currentBand);
+    }
+  }, 150);
+}
+
+function updateDevAudioTuningVisibility() {
+  if (!devAudioTuningPanel || !devAudioTuningToggle) return;
+  devAudioTuningPanel.hidden = !devAudioTuningToggle.checked;
 }
 
 function updateSessionLabel() {
@@ -2658,6 +3429,12 @@ const irSelect = document.getElementById('irSelect');
 if (irSelect) {
   irSelect.addEventListener('change', () => {
     selectedIR = irSelect.value || 'none';
+    if (devIrPreset && devIrPreset.value && devIrPreset.value !== 'custom') {
+      applyDevReverbPreset(devIrPreset.value, { markCustom: false, shouldRetune: false });
+    } else {
+      updateDevIrPresetLabel();
+    }
+    clearProcessedIrCache();
     // Restart audio to apply new reverb settings if running
     if (baseOsc) {
       const currentBand = getCurrentBandHz();
@@ -2665,6 +3442,28 @@ if (irSelect) {
     }
   });
 }
+
+if (devAudioTuningToggle) {
+  devAudioTuningToggle.addEventListener('change', updateDevAudioTuningVisibility);
+}
+
+if (devIrPreset) {
+  devIrPreset.addEventListener('change', () => {
+    const preset = devIrPreset.value || 'custom';
+    if (preset === 'custom') {
+      updateDevIrPresetLabel();
+      return;
+    }
+    applyDevReverbPreset(preset, { markCustom: false, shouldRetune: true });
+  });
+}
+
+[devIrNormalizeTrim, devIrDuration, devIrLowpass, devIrWetTrim, devIrSendTrim]
+  .filter(Boolean)
+  .forEach((input) => {
+    input.addEventListener('input', () => queueDevIrRetune({ markCustom: true }));
+    input.addEventListener('change', () => queueDevIrRetune({ markCustom: true }));
+  });
 
 // Meditate controls
 if (medPlay) medPlay.addEventListener('click', startMeditation);
@@ -2763,7 +3562,7 @@ if (breathSeconds) breathSeconds.addEventListener('input', () => {
   if (medBreathSeconds && medBreathSeconds.value !== breathSeconds.value) {
     medBreathSeconds.value = breathSeconds.value;
   }
-  updateBreathAnimation();
+  updateBreathAnimation(parseFloat(breathSeconds.value));
 });
 
 // Breathing slider (Meditate)
@@ -2771,7 +3570,7 @@ if (medBreathSeconds) medBreathSeconds.addEventListener('input', () => {
   if (breathSeconds && breathSeconds.value !== medBreathSeconds.value) {
     breathSeconds.value = medBreathSeconds.value;
   }
-  updateBreathAnimation();
+  updateBreathAnimation(parseFloat(medBreathSeconds.value));
 });
 
 // Session length slider
@@ -2807,6 +3606,20 @@ if (medFreqSelect) medFreqSelect.addEventListener('change', () => {
 
 // Initial UI state setup
 if (appVersionBadge) appVersionBadge.textContent = APP_VERSION;
+if (devIrNormalizeTrim) devIrNormalizeTrim.value = String(DEV_REVERB_DEFAULTS.normalizeTrimDb);
+if (devIrDuration) devIrDuration.value = String(DEV_REVERB_DEFAULTS.durationSec);
+if (devIrLowpass) devIrLowpass.value = String(DEV_REVERB_DEFAULTS.lowpassHz);
+if (devIrWetTrim) devIrWetTrim.value = String(DEV_REVERB_DEFAULTS.wetTrim);
+if (devIrSendTrim) devIrSendTrim.value = String(DEV_REVERB_DEFAULTS.sendTrim);
+if (devIrPreset && !devIrPreset.value) devIrPreset.value = 'balanced';
+const initialPreset = devIrPreset ? (devIrPreset.value || 'custom') : 'custom';
+if (initialPreset !== 'custom') {
+  applyDevReverbPreset(initialPreset, { markCustom: false, shouldRetune: false });
+} else {
+  syncDevAudioTuningLabels();
+  pullDevAudioTuningValues();
+}
+updateDevAudioTuningVisibility();
 updatePhaseLabel();
 updateSweepLabel();
 updateCarrierLabel();
@@ -2815,6 +3628,9 @@ updateVolumeLabel();
 updateToneMixLabel();
 updateSessionLabel();
 updateSoundscapeLabels();
+applyBreathSliderConfig(breathSeconds);
+applyBreathSliderConfig(medBreathSeconds);
+initBreathOrbs();
 updateBreathAnimation();
 updateBestPhaseDisplay();
 updateMedPhaseLabel();

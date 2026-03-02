@@ -1,10 +1,13 @@
 # Baseline Version
 
-Current baseline: **v2.6.0**  
-Date: **2026-02-24**
+Current baseline: **v2.6.6**  
+Date: **2026-03-02**
 
 This baseline includes:
 - Full UI scaffold + external stylesheet
 - Chord/IR integration workflow and helper scripts
 - Meditation-weighted chord recommendations with user preference override
-- Smoke test checklist and updated design documentation
+- Hidden "Developer Audio Tuning" controls for IR fine tuning
+- Temple/Forest presets (`Calm`, `Balanced`, `Deep`) for fast auditioning
+- IR normalization + tail-duration shaping + low-pass/wet/send control path
+- Updated requirements, architecture, and schematic documentation

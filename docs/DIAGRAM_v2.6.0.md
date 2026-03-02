@@ -1,4 +1,4 @@
-# Architecture Diagram (v2.6.0)
+# Architecture Diagram (v2.6.6)
 
 ```mermaid
 flowchart TD
@@ -9,6 +9,9 @@ flowchart TD
   JS --> ENG[Audio Engine]
   JS --> PERSIST[LocalStorage]
   CTRL --> PHASECTL[Phase Controls\nSlider / Autosweep / A/B Finder]
+  CTRL --> DEVAUD[Developer Audio Tuning\nhidden by checkbox]
+  DEVAUD --> PRESET[Preset Mapper\nCalm / Balanced / Deep]
+  DEVAUD --> IRTUNE[IR Tuning Sliders\ntrim/duration/lp/wet/send]
 
   ENG --> MODE[Stimulation Modes\nAM / Binaural / Spatial Echo / Ambient Echo]
   ENG --> PBUS[Tone Phase Bus\nR delay derived from phase slider]
@@ -16,6 +19,7 @@ flowchart TD
   ENG --> CHORD[Chord Layer\nSynth + Loop]
   ENG --> MIX[Master Mix Bus]
   ENG --> IR[Convolution Reverb (Parallel Wet Bus)]
+  ENG --> IRPROC[IR Preprocess\nnormalize + tail shape + cache]
 
   MODE --> AM[AM: carrier amplitude modulation]
   MODE --> BIN[Binaural: L/R split by band/2]
@@ -33,11 +37,15 @@ flowchart TD
   SCAPE --> MIX
   CHORD --> MIX
   MIX --> DRY[Dry Path -> analyser -> destination]
-  MIX --> IR
-  IR --> WET[Wet Path -> destination]
+  MIX --> SEND[IR Send Gain]
+  SEND --> IR
+  IR --> WET[Wet Path -> HP/LP/Comp -> analyser]
+  PRESET --> IRTUNE
+  IRTUNE --> IRPROC
+  IRPROC --> IR
 
-  IR --> IRF[assets/ir/forest.wav]
-  IR --> IRT[assets/ir/temple.wav]
+  IRPROC --> IRF[assets/ir/forest.wav]
+  IRPROC --> IRT[assets/ir/temple.wav]
 
   SCAPE --> SFILES[assets/audio/soundscapes/*]
 

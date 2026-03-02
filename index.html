@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Schumann Lab</title>
-    <link rel="stylesheet" href="styles.css?v=2.6.2" />
+    <link rel="stylesheet" href="styles.css?v=2.6.6" />
   </head>
   <body>
     <main class="wrap">
       <header class="hero">
         <div class="hero-top">
           <h1>Schumann Resonance Lab</h1>
-          <span id="appVersionBadge" class="version-badge">v2.6.1-dev</span>
+          <span id="appVersionBadge" class="version-badge">v2.6.6-dev</span>
         </div>
         <p class="hero-subtitle">Breath-synced resonance, calming spatial fields, and phase-guided tuning.</p>
       </header>
@@ -76,6 +76,46 @@
               <option value="forest">Forest</option>
               <option value="temple">Temple</option>
             </select>
+            <label class="dev-audio-toggle" for="devAudioTuningToggle">
+              <input id="devAudioTuningToggle" type="checkbox" />
+              Developer Audio Tuning
+            </label>
+            <div id="devAudioTuningPanel" class="dev-audio-panel" hidden>
+              <label for="devIrPreset">
+                Reverb Preset <span id="devIrPresetLabel">Balanced (Temple)</span>
+              </label>
+              <select id="devIrPreset">
+                <option value="calm">Calm</option>
+                <option value="balanced" selected>Balanced</option>
+                <option value="deep">Deep</option>
+                <option value="custom">Custom</option>
+              </select>
+
+              <label for="devIrNormalizeTrim">
+                IR Normalize Trim <span id="devIrNormalizeTrimLabel">0.0 dB</span>
+              </label>
+              <input id="devIrNormalizeTrim" type="range" min="-18" max="6" step="0.5" value="0" />
+
+              <label for="devIrDuration">
+                IR Tail Duration <span id="devIrDurationLabel">4.2 s</span>
+              </label>
+              <input id="devIrDuration" type="range" min="0.8" max="8" step="0.1" value="4.2" />
+
+              <label for="devIrLowpass">
+                IR Tail Low-pass <span id="devIrLowpassLabel">Auto</span>
+              </label>
+              <input id="devIrLowpass" type="range" min="0" max="12000" step="100" value="0" />
+
+              <label for="devIrWetTrim">
+                IR Wet Trim <span id="devIrWetTrimLabel">100%</span>
+              </label>
+              <input id="devIrWetTrim" type="range" min="0.3" max="1.8" step="0.01" value="1" />
+
+              <label for="devIrSendTrim">
+                IR Send Trim <span id="devIrSendTrimLabel">100%</span>
+              </label>
+              <input id="devIrSendTrim" type="range" min="0.3" max="1.8" step="0.01" value="1" />
+            </div>
           </div>
 
           <div class="panel">
@@ -116,7 +156,7 @@
 
           <div class="panel">
             <h2>Soundscapes</h2>
-            <label>Ocean <span id="oceanLabel">0%</span></label>
+            <label>Babbling Brook <span id="oceanLabel">0%</span></label>
             <input id="oceanRange" type="range" min="0" max="1" step="0.01" value="0" />
             <label>Rain <span id="rainLabel">0%</span></label>
             <input id="rainRange" type="range" min="0" max="1" step="0.01" value="0" />
@@ -129,7 +169,7 @@
           <div class="panel">
             <h2>Breathing + Scope</h2>
             <label>Breath Cycle <span id="breathLabel">8.17 s (64×T)</span></label>
-            <input id="breathSeconds" type="range" min="0" max="9" step="1" value="5" />
+            <input id="breathSeconds" type="range" min="3" max="19" step="any" value="8.1737" />
             <div id="breathOrb" class="breath-orb"></div>
             <p id="breathSyncLabel" class="small"></p>
             <canvas id="scopeCanvas" width="720" height="220"></canvas>
@@ -164,7 +204,7 @@
 
           <div class="panel">
             <h2>Soundscapes</h2>
-            <label>Ocean <span id="medOceanLabel">0%</span></label>
+            <label>Babbling Brook <span id="medOceanLabel">0%</span></label>
             <input id="medOceanRange" type="range" min="0" max="1" step="0.01" value="0" />
             <label>Rain <span id="medRainLabel">0%</span></label>
             <input id="medRainRange" type="range" min="0" max="1" step="0.01" value="0" />
@@ -177,7 +217,7 @@
           <div class="panel">
             <h2>Breathing</h2>
             <label>Breath Cycle <span id="medBreathLabel">8.17 s (64×T)</span></label>
-            <input id="medBreathSeconds" type="range" min="0" max="9" step="1" value="5" />
+            <input id="medBreathSeconds" type="range" min="3" max="19" step="any" value="8.1737" />
             <div id="medBreathOrb" class="breath-orb"></div>
             <p id="medBreathSyncLabel" class="small"></p>
           </div>
@@ -230,6 +270,6 @@
       <span id="saveNoteStatus" hidden></span>
     </main>
 
-    <script src="app.js?v=2.6.2"></script>
+    <script src="app.js?v=2.6.6"></script>
   </body>
 </html>

@@ -1,3 +1,23 @@
+# Release Notes - v2.6.6 (2026-03-02)
+
+## Added
+- Hidden `Developer Audio Tuning` panel behind checkbox in Explore view.
+- Named IR presets for both `Temple` and `Forest` spaces: `Calm`, `Balanced`, `Deep`.
+
+## Updated
+- IR processing pipeline now supports:
+  - raw IR decode cache
+  - processed IR cache keyed by tuning values
+  - normalization trim (dB)
+  - tail duration shaping with fade
+  - optional tail low-pass override
+- Reverb defaults tuned to reduce Temple tail fatigue while keeping space perception.
+- Breath orb particle motion retuned for stronger volumetric 3D fill.
+- Version badges/cache query strings bumped to `v2.6.6-dev`.
+- Baseline/versioning docs updated.
+
+---
+
 # Release Notes - v2.6.0 (2026-02-24)
 
 ## Added

@@ -1,4 +1,4 @@
-# Schumann Lab v2.6.0
+# Schumann Lab v2.6.6
 
 Browser-first Schumann resonance meditation lab with:
 - Schumann-band stimulation modes (AM, Binaural, Spatial Echo, Ambient Echo)
@@ -7,10 +7,11 @@ Browser-first Schumann resonance meditation lab with:
 - Mobile-aware chord manifests (`manifest.mobile.json` fallback on iOS/Android)
 - Built-in real meditation guitar loop library (`gtr_real_mr_*`)
 - Forest/Temple convolution reverb
+- Hidden developer reverb tuning panel with Temple/Forest presets (`Calm`, `Balanced`, `Deep`)
 - Guided phase A/B finder (to 18° resolution), autosweep, meditation timer, and journal/history persistence
 
 ## Baseline
-- Current baseline: `v2.6.0`
+- Current baseline: `v2.6.6`
 - Baseline marker: `BASELINE_VERSION.md`
 
 ## Quick Start
