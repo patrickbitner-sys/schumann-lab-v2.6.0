@@ -112,7 +112,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 6 0 R >>
 endobj
 6 0 obj
-<< /Length 1651 >>
+<< /Length 1740 >>
 stream
 BT
 /F1 11 Tf
@@ -132,6 +132,30 @@ T*
 (- `npm run cap:add:ios` is first-time only. After that, use `cap:sync:ios`.) Tj
 T*
 (- If `ios/` already exists later, skip `cap:add:ios`.) Tj
+T*
+T*
+(3.1 Lockfile Requirement \(Important\)) Tj
+T*
+(------------------------------------) Tj
+T*
+T*
+T*
+(After npm install, make sure package-lock.json is present and tracked in git.) Tj
+T*
+(This ensures deterministic dependency resolution across your Mac, CI, and future machines.) Tj
+T*
+T*
+(Run:) Tj
+T*
+T*
+(    git add package-lock.json) Tj
+T*
+(    git commit -m "chore: add package-lock for deterministic npm installs") Tj
+T*
+(    git push origin main) Tj
+T*
+T*
+(If npm install later updates the lockfile, commit that change as well.) Tj
 T*
 T*
 (4. Daily Update Flow \(After You Change Web Code\)) Tj
@@ -175,6 +199,24 @@ T*
 T*
 (- Add final icons in `Assets.xcassets`) Tj
 T*
+ET
+BT
+/F1 9 Tf
+492 24 Td
+(Page 2 of 4) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 1909 >>
+stream
+BT
+/F1 11 Tf
+52 736 Td
+14 TL
 (7. If you need background audio behavior:) Tj
 T*
 (- Add capability `Background Modes`) Tj
@@ -201,24 +243,6 @@ T*
 T*
 (- Primary language) Tj
 T*
-ET
-BT
-/F1 9 Tf
-492 24 Td
-(Page 2 of 4) Tj
-ET
-endstream
-endobj
-7 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 8 0 R >>
-endobj
-8 0 obj
-<< /Length 2129 >>
-stream
-BT
-/F1 11 Tf
-52 736 Td
-14 TL
 (- Bundle ID: `com.patrickbitner.schumannlab`) Tj
 T*
 (2. Fill app metadata:) Tj
@@ -276,6 +300,24 @@ T*
 T*
 T*
 T*
+ET
+BT
+/F1 9 Tf
+492 24 Td
+(Page 3 of 4) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 1631 >>
+stream
+BT
+/F1 11 Tf
+52 736 Td
+14 TL
 (Apple requirements can change each cycle. Check current upload requirements before archiving.) Tj
 T*
 (As of this guide date \(2026-03-02\), Apple posted upcoming App Store submission requirements) Tj
@@ -302,24 +344,6 @@ T*
 T*
 (- Re-select Team, confirm Bundle ID not used by another app in your account.) Tj
 T*
-ET
-BT
-/F1 9 Tf
-492 24 Td
-(Page 3 of 4) Tj
-ET
-endstream
-endobj
-9 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 10 0 R >>
-endobj
-10 0 obj
-<< /Length 959 >>
-stream
-BT
-/F1 11 Tf
-52 736 Td
-14 TL
 (- Build uploaded but not visible:) Tj
 T*
 (- Wait for App Store Connect processing \(can take minutes to hours\).) Tj
@@ -375,13 +399,13 @@ xref
 0000000266 00000 n 
 0000001969 00000 n 
 0000002096 00000 n 
-0000003798 00000 n 
-0000003925 00000 n 
-0000006105 00000 n 
-0000006233 00000 n 
-0000007243 00000 n 
+0000003887 00000 n 
+0000004014 00000 n 
+0000005974 00000 n 
+0000006102 00000 n 
+0000007785 00000 n 
 trailer
 << /Size 12 /Root 1 0 R >>
 startxref
-7314
+7856
 %%EOF

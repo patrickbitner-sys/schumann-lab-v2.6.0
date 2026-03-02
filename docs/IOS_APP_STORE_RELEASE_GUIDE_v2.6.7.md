@@ -49,6 +49,21 @@ Notes:
 - `npm run cap:add:ios` is first-time only. After that, use `cap:sync:ios`.
 - If `ios/` already exists later, skip `cap:add:ios`.
 
+## 3.1 Lockfile Requirement (Important)
+
+After `npm install`, make sure `package-lock.json` is present and tracked in git.
+This ensures deterministic dependency resolution across your Mac, CI, and future machines.
+
+Run:
+
+```bash
+git add package-lock.json
+git commit -m "chore: add package-lock for deterministic npm installs"
+git push origin main
+```
+
+If `npm install` later updates the lockfile, commit that change as well.
+
 ## 4. Daily Update Flow (After You Change Web Code)
 
 ```bash
