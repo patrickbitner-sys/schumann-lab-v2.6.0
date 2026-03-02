@@ -10,12 +10,6 @@ Install the Capacitor CLI globally (requires Node.js and npm):
 npm install --global @capacitor/cli
 ```
 
-Create a fresh `package.json` if you don’t already have one.  From the root of your project:
-
-```bash
-npm init -y
-```
-
 Add Capacitor to your project and initialise it.  You’ll be prompted for an **app name** and **app ID** (reverse‑DNS format, e.g. `com.example.schumannlab`):
 
 ```bash
@@ -23,13 +17,13 @@ npm install @capacitor/core @capacitor/cli
 npx cap init
 ```
 
-Capacitor will create a `capacitor.config.json` file.  By default it looks for your web assets in the `www/` directory.  Our PWA files live in the project root, so we need to set `"webDir": "."` in the config:
+Capacitor will create a `capacitor.config.json` file.  By default it looks for your web assets in the `www/` directory.  This repo now follows that model and includes a helper script (`npm run cap:prepare`) that copies the web payload into `www/`.
 
 ```json
 {
   "appId": "com.example.schumannlab",
   "appName": "Schumann Lab",
-  "webDir": ".",
+  "webDir": "www",
   "bundledWebRuntime": false
 }
 ```
@@ -60,6 +54,7 @@ npx cap open android
 Whenever you change your web code you must copy the latest assets into the native projects and rebuild them.  Run:
 
 ```bash
+npm run cap:prepare
 npx cap copy
 ```
 

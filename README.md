@@ -45,6 +45,27 @@ Note: Open via HTTP, not `file://`.
 ## iOS Setup
 - iOS setup guide (Worldwide Web + Safari): `PWA_SETUP_IOS.md`
 - iOS on-device validation checklist: `ON_DEVICE_TEST_CHECKLIST.md`
+- Capacitor migration notes: `CAPACITOR_MIGRATION.md`
+- Mac Mini App Store release guide: `docs/IOS_APP_STORE_RELEASE_GUIDE_v2.6.7.md`
+
+## Native iOS Scaffold
+- Capacitor config: `capacitor.config.json`
+- Build Capacitor `www/` payload:
+```bash
+npm run cap:prepare
+```
+- First-time iOS project add:
+```bash
+npm run cap:add:ios
+```
+- Refresh iOS shell with latest web assets:
+```bash
+npm run cap:sync:ios
+```
+- Open in Xcode:
+```bash
+npm run cap:open:ios
+```
 
 ## Testing
 - Manual smoke checklist: `SMOKE_TEST_CHECKLIST.md`

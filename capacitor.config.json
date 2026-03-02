@@ -1,0 +1,6 @@
+{
+  "appId": "com.patrickbitner.schumannlab",
+  "appName": "Schumann Lab",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

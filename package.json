@@ -1,0 +1,23 @@
+{
+  "name": "schumann-lab",
+  "version": "2.6.7",
+  "private": true,
+  "description": "Schumann Resonance Lab static app with Capacitor scaffold",
+  "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "start": "python3 -m http.server 8080",
+    "check:js": "tools/nodew.sh --check app.js",
+    "cap:prepare": "tools/nodew.sh tools/prepare_capacitor_webdir.js",
+    "cap:doctor": "tools/npmw.sh exec cap doctor",
+    "cap:add:ios": "tools/npmw.sh exec cap add ios",
+    "cap:sync:ios": "tools/npmw.sh run cap:prepare && tools/npmw.sh exec cap sync ios",
+    "cap:open:ios": "tools/npmw.sh exec cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  }
+}

@@ -1,0 +1,387 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 4 /Kids [3 0 R 5 0 R 7 0 R 9 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1652 >>
+stream
+BT
+/F1 11 Tf
+52 736 Td
+14 TL
+(SCHUMANN LAB IOS APP STORE RELEASE GUIDE \(MAC MINI\)) Tj
+T*
+(===================================================) Tj
+T*
+T*
+T*
+(Prepared for: moving from Windows/WSL development to macOS signing and App Store release.) Tj
+T*
+(Prepared on: 2026-03-02.) Tj
+T*
+T*
+(1. What Is Already Scaffolded In This Repo) Tj
+T*
+(------------------------------------------) Tj
+T*
+T*
+T*
+(- `capacitor.config.json` exists and is set to:) Tj
+T*
+(- `appId`: `com.patrickbitner.schumannlab`) Tj
+T*
+(- `appName`: `Schumann Lab`) Tj
+T*
+(- `webDir`: `www`) Tj
+T*
+(- `package.json` includes Capacitor dependencies and iOS scripts:) Tj
+T*
+(- `npm run cap:prepare`) Tj
+T*
+(- `npm run cap:add:ios`) Tj
+T*
+(- `npm run cap:sync:ios`) Tj
+T*
+(- `npm run cap:open:ios`) Tj
+T*
+(- `npm run cap:doctor`) Tj
+T*
+(- `tools/prepare_capacitor_webdir.js` builds `www/` by copying:) Tj
+T*
+(- `index.html`) Tj
+T*
+(- `styles.css`) Tj
+T*
+(- `app.js`) Tj
+T*
+(- `assets/`) Tj
+T*
+T*
+(2. Mac Mini Prerequisites) Tj
+T*
+(-------------------------) Tj
+T*
+T*
+T*
+(1. Install latest Xcode from the Mac App Store.) Tj
+T*
+(2. Open Xcode once and accept license/install components.) Tj
+T*
+(3. Install Node.js LTS \(recommended: 20+\).) Tj
+T*
+(4. Ensure you can run:) Tj
+T*
+(- `node -v`) Tj
+T*
+(- `npm -v`) Tj
+T*
+(- `xcodebuild -version`) Tj
+T*
+(5. Sign into Xcode with the Apple ID in your Apple Developer account.) Tj
+T*
+(6. Verify your Apple Developer Program membership is active.) Tj
+T*
+T*
+(3. First-Time Project Setup On Mac) Tj
+T*
+(----------------------------------) Tj
+T*
+T*
+T*
+(From repo root:) Tj
+T*
+T*
+(    npm install) Tj
+T*
+ET
+BT
+/F1 9 Tf
+492 24 Td
+(Page 1 of 4) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 1651 >>
+stream
+BT
+/F1 11 Tf
+52 736 Td
+14 TL
+(    npm run cap:prepare) Tj
+T*
+(    npm run cap:add:ios) Tj
+T*
+(    npm run cap:sync:ios) Tj
+T*
+(    npm run cap:open:ios) Tj
+T*
+T*
+(Notes:) Tj
+T*
+(- `npm run cap:add:ios` is first-time only. After that, use `cap:sync:ios`.) Tj
+T*
+(- If `ios/` already exists later, skip `cap:add:ios`.) Tj
+T*
+T*
+(4. Daily Update Flow \(After You Change Web Code\)) Tj
+T*
+(------------------------------------------------) Tj
+T*
+T*
+T*
+(    npm run cap:sync:ios) Tj
+T*
+(    npm run cap:open:ios) Tj
+T*
+T*
+(This refreshes the native iOS shell with latest web assets.) Tj
+T*
+T*
+(5. Xcode Signing And Build Settings) Tj
+T*
+(-----------------------------------) Tj
+T*
+T*
+T*
+(In Xcode \(ios/App/App.xcworkspace\):) Tj
+T*
+T*
+(1. Target: `App` -> `Signing & Capabilities`) Tj
+T*
+(2. Enable `Automatically manage signing`) Tj
+T*
+(3. Select your Team) Tj
+T*
+(4. Confirm Bundle ID: `com.patrickbitner.schumannlab`) Tj
+T*
+(5. Set version numbers:) Tj
+T*
+(- Marketing Version \(example: `2.6.7`\)) Tj
+T*
+(- Build Number \(increment each upload, example: `26701`, `26702`, ...\)) Tj
+T*
+(6. App icons:) Tj
+T*
+(- Add final icons in `Assets.xcassets`) Tj
+T*
+(7. If you need background audio behavior:) Tj
+T*
+(- Add capability `Background Modes`) Tj
+T*
+(- Enable `Audio, AirPlay, and Picture in Picture`) Tj
+T*
+(- Re-test battery behavior and lock-screen/foreground transitions) Tj
+T*
+T*
+(6. App Store Connect Setup) Tj
+T*
+(--------------------------) Tj
+T*
+T*
+T*
+(In App Store Connect:) Tj
+T*
+T*
+(1. Create new app record:) Tj
+T*
+(- Platform: iOS) Tj
+T*
+(- Name: Schumann Lab) Tj
+T*
+(- Primary language) Tj
+T*
+ET
+BT
+/F1 9 Tf
+492 24 Td
+(Page 2 of 4) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 2129 >>
+stream
+BT
+/F1 11 Tf
+52 736 Td
+14 TL
+(- Bundle ID: `com.patrickbitner.schumannlab`) Tj
+T*
+(2. Fill app metadata:) Tj
+T*
+(- Description, keywords, support URL, marketing URL \(if any\)) Tj
+T*
+(- Screenshots for required device sizes) Tj
+T*
+(3. Complete App Privacy questionnaire.) Tj
+T*
+(4. Set age rating and content rights info.) Tj
+T*
+(5. Add TestFlight testers \(internal first, external after\).) Tj
+T*
+T*
+(7. Upload Build From Xcode) Tj
+T*
+(--------------------------) Tj
+T*
+T*
+T*
+(1. In Xcode set destination to `Any iOS Device \(arm64\)`.) Tj
+T*
+(2. Menu: `Product` -> `Archive`.) Tj
+T*
+(3. In Organizer select archive -> `Distribute App`.) Tj
+T*
+(4. Choose `App Store Connect`.) Tj
+T*
+(5. Upload and wait for processing in App Store Connect.) Tj
+T*
+(6. Attach the processed build to your app version, then submit for review.) Tj
+T*
+T*
+(8. Recommended TestFlight Gate Before Submission) Tj
+T*
+(------------------------------------------------) Tj
+T*
+T*
+T*
+(- Audio starts and stops correctly in Explore and Meditate modes.) Tj
+T*
+(- Reverb space switching works \(`None`, `Forest`, `Temple`\).) Tj
+T*
+(- Breathing orb behavior and flash effects render smoothly on real iPhone.) Tj
+T*
+(- No crashes when switching tabs repeatedly.) Tj
+T*
+(- Session timer, journaling, and exports behave as expected.) Tj
+T*
+T*
+(9. Important Time-Sensitive Policy Check) Tj
+T*
+(----------------------------------------) Tj
+T*
+T*
+T*
+(Apple requirements can change each cycle. Check current upload requirements before archiving.) Tj
+T*
+(As of this guide date \(2026-03-02\), Apple posted upcoming App Store submission requirements) Tj
+T*
+(with an April 2026 enforcement window.) Tj
+T*
+(Before your first submission, re-check:) Tj
+T*
+T*
+(- https://developer.apple.com/news/?id=utw4yhtp) Tj
+T*
+(- https://developer.apple.com/app-store/submitting/) Tj
+T*
+(- https://developer.apple.com/app-store/review/guidelines/) Tj
+T*
+T*
+(10. Quick Troubleshooting) Tj
+T*
+(-------------------------) Tj
+T*
+T*
+T*
+(- Signing error:) Tj
+T*
+(- Re-select Team, confirm Bundle ID not used by another app in your account.) Tj
+T*
+ET
+BT
+/F1 9 Tf
+492 24 Td
+(Page 3 of 4) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 959 >>
+stream
+BT
+/F1 11 Tf
+52 736 Td
+14 TL
+(- Build uploaded but not visible:) Tj
+T*
+(- Wait for App Store Connect processing \(can take minutes to hours\).) Tj
+T*
+(- Web changes not showing in iOS app:) Tj
+T*
+(- Run `npm run cap:sync:ios` again, then clean build folder in Xcode.) Tj
+T*
+(- App Review audio/background concerns:) Tj
+T*
+(- Keep background audio behavior intentional and documented in review notes.) Tj
+T*
+T*
+(11. Helpful References) Tj
+T*
+(----------------------) Tj
+T*
+T*
+T*
+(- Capacitor iOS deploy docs:) Tj
+T*
+(- https://capacitorjs.com/docs/ios/deploying-to-app-store) Tj
+T*
+(- Capacitor general docs:) Tj
+T*
+(- https://capacitorjs.com/docs/getting-started) Tj
+T*
+(- App Store Connect upload flow:) Tj
+T*
+(- https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/) Tj
+T*
+(- Apple Developer Program membership:) Tj
+T*
+(- https://developer.apple.com/support/compare-memberships/) Tj
+T*
+ET
+BT
+/F1 9 Tf
+492 24 Td
+(Page 4 of 4) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000139 00000 n 
+0000000266 00000 n 
+0000001969 00000 n 
+0000002096 00000 n 
+0000003798 00000 n 
+0000003925 00000 n 
+0000006105 00000 n 
+0000006233 00000 n 
+0000007243 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+7314
+%%EOF
