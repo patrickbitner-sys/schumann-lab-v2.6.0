@@ -1,4 +1,4 @@
-# Schumann Lab v2.6.6
+# Schumann Lab v2.6.7
 
 Browser-first Schumann resonance meditation lab with:
 - Schumann-band stimulation modes (AM, Binaural, Spatial Echo, Ambient Echo)
@@ -11,7 +11,7 @@ Browser-first Schumann resonance meditation lab with:
 - Guided phase A/B finder (to 18° resolution), autosweep, meditation timer, and journal/history persistence
 
 ## Baseline
-- Current baseline: `v2.6.6`
+- Current baseline: `v2.6.7`
 - Baseline marker: `BASELINE_VERSION.md`
 
 ## Quick Start

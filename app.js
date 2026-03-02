@@ -49,7 +49,7 @@
 //  - Added haptic feedback and audio chime when marking strongest phase.
 //  - Updated build and cache versions to v2.0.4.
 console.log("app.js loaded");
-const APP_VERSION = 'v2.6.6-dev';
+const APP_VERSION = 'v2.6.7-dev';
 const PHASE_TARGET_DEGREES = 18; // 5% of a full 360° cycle.
 // ---- Core audio state ----
 let audioCtx = null;
@@ -1088,7 +1088,7 @@ const DEFAULT_BREATH_MULTIPLIER = 64;
 const DEFAULT_BREATH_SECONDS = DEFAULT_BREATH_MULTIPLIER / 7.83;
 const BREATH_ORB_MIN_SCALE = 0.76;
 const BREATH_ORB_MAX_SCALE = 1.08;
-const BREATH_PARTICLE_COUNT = 60;
+const BREATH_PARTICLE_COUNT = 78;
 let breathCycleMultiplier = DEFAULT_BREATH_MULTIPLIER;
 let breathCycleSeconds = DEFAULT_BREATH_SECONDS;
 let breathOrbStates = [];
@@ -1809,7 +1809,7 @@ function randomBiasedPointInUnitSphere(surfaceBias) {
   const bias = clampNumber(surfaceBias, 0, 1, 0);
   const radius = Math.hypot(p.x, p.y, p.z);
   if (radius < 0.0001) return p;
-  const surfaceTarget = 0.42 + Math.random() * 0.58;
+  const surfaceTarget = 0.18 + Math.random() * 0.82;
   const desiredRadius = radius * (1 - bias) + surfaceTarget * bias;
   const scale = desiredRadius / radius;
   return {
@@ -1820,8 +1820,8 @@ function randomBiasedPointInUnitSphere(surfaceBias) {
 }
 
 function spawnBreathParticle(radiusPx) {
-  const p = randomBiasedPointInUnitSphere(0.55);
-  const target = randomBiasedPointInUnitSphere(0.4);
+  const p = randomBiasedPointInUnitSphere(0.32);
+  const target = randomBiasedPointInUnitSphere(0.2);
   const tint = Math.random() < 0.58 ? 'white' : 'blue';
   return {
     x: p.x,
@@ -1870,7 +1870,7 @@ function renderBreathOrbParticles(state, level, dtSec) {
     p.targetLife -= safeDt;
     const distToTarget = Math.hypot(p.tx - p.x, p.ty - p.y, p.tz - p.z);
     if (p.targetLife <= 0 || distToTarget < 0.12) {
-      const next = randomBiasedPointInUnitSphere(0.4);
+      const next = randomBiasedPointInUnitSphere(0.2);
       p.tx = next.x;
       p.ty = next.y;
       p.tz = next.z;
@@ -1883,9 +1883,9 @@ function renderBreathOrbParticles(state, level, dtSec) {
     p.vz += (p.tz - p.z) * 0.48 * safeDt;
 
     // Soft isotropic center pull keeps particles inside the orb volume.
-    p.vx += (-p.x) * 0.015 * safeDt;
-    p.vy += (-p.y) * 0.015 * safeDt;
-    p.vz += (-p.z) * 0.015 * safeDt;
+    p.vx += (-p.x) * 0.022 * safeDt;
+    p.vy += (-p.y) * 0.022 * safeDt;
+    p.vz += (-p.z) * 0.022 * safeDt;
 
     // Mild per-particle spin preserves depth motion without a global ellipse.
     p.vx += (p.spin * p.y) * safeDt;
@@ -1964,7 +1964,7 @@ function triggerBreathFlash(state, peak) {
   state.flashTimer = setTimeout(() => {
     state.orb.classList.remove(cls);
     state.flashTimer = null;
-  }, 340);
+  }, 920);
 }
 
 function animateBreathOrbs(ts) {

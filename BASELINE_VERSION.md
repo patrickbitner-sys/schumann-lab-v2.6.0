@@ -1,6 +1,6 @@
 # Baseline Version
 
-Current baseline: **v2.6.6**  
+Current baseline: **v2.6.7**  
 Date: **2026-03-02**
 
 This baseline includes:
